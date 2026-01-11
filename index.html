@@ -1,0 +1,1752 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ZYY WA BADAK - Premium Activation</title>
+  
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  
+  <!-- Font Awesome & Google Font -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ===== RESET & VARIABLES ===== */
+    :root {
+      /* Premium Color Palette */
+      --neon-green: #00ff88;
+      --neon-purple: #8b5cf6;
+      --neon-cyan: #00f7ff;
+      --neon-pink: #ff00ff;
+      --dark-bg: #0a0a0f;
+      --darker-bg: #050508;
+      --card-bg: rgba(20, 20, 30, 0.8);
+      --card-hover: rgba(30, 30, 45, 0.9);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      
+      /* Gradients */
+      --gradient-primary: linear-gradient(135deg, var(--neon-green), var(--neon-cyan));
+      --gradient-danger: linear-gradient(135deg, #ff4757, #ff3838);
+      --gradient-premium: linear-gradient(135deg, var(--neon-purple), var(--neon-pink));
+      
+      /* Shadows */
+      --shadow-neon: 0 0 20px rgba(0, 255, 136, 0.3);
+      --shadow-xl: 0 25px 50px rgba(0, 0, 0, 0.5);
+      
+      /* Animation */
+      --transition-glitch: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      background: var(--dark-bg);
+      color: white;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* ===== CYBERPUNK BACKGROUND ===== */
+    .cyber-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      background: 
+        radial-gradient(circle at 20% 50%, rgba(0, 255, 136, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 80%, rgba(0, 247, 255, 0.1) 0%, transparent 50%);
+    }
+
+    .grid-lines {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(rgba(0, 255, 136, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 136, 0.05) 1px, transparent 1px);
+      background-size: 50px 50px;
+      z-index: -1;
+      animation: gridMove 20s linear infinite;
+    }
+
+    @keyframes gridMove {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(50px, 50px); }
+    }
+
+    .glitch-text {
+      position: relative;
+      animation: glitch 3s infinite;
+    }
+
+    @keyframes glitch {
+      0%, 100% { transform: translate(0); }
+      10% { transform: translate(-2px, 2px); }
+      20% { transform: translate(2px, -2px); }
+      30% { transform: translate(-2px, -2px); }
+      40% { transform: translate(2px, 2px); }
+      50% { transform: translate(-2px, 2px); }
+      60% { transform: translate(2px, -2px); }
+      70% { transform: translate(-2px, -2px); }
+      80% { transform: translate(2px, 2px); }
+      90% { transform: translate(-2px, 2px); }
+    }
+
+    /* ===== MAIN LAYOUT ===== */
+    .main-wrapper {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ===== LOGIN PAGE ===== */
+    .login-screen {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .cyber-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 40px;
+      width: 100%;
+      max-width: 400px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-xl);
+    }
+
+    .cyber-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--gradient-primary);
+      animation: scanline 2s linear infinite;
+    }
+
+    @keyframes scanline {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    .logo-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .logo-icon {
+      width: 80px;
+      height: 80px;
+      background: var(--gradient-primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 36px;
+      color: black;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .logo-header h1 {
+      font-size: 28px;
+      font-weight: 900;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+    }
+
+    .logo-header p {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 14px;
+    }
+
+    /* Input Fields */
+    .input-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .input-label {
+      display: block;
+      color: var(--neon-green);
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .cyber-input {
+      width: 100%;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid rgba(0, 255, 136, 0.2);
+      border-radius: 10px;
+      color: white;
+      font-size: 14px;
+      transition: var(--transition-glitch);
+    }
+
+    .cyber-input:focus {
+      outline: none;
+      border-color: var(--neon-green);
+      box-shadow: var(--shadow-neon);
+    }
+
+    /* Buttons */
+    .cyber-btn {
+      width: 100%;
+      padding: 15px;
+      background: var(--gradient-primary);
+      border: none;
+      border-radius: 10px;
+      color: black;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: var(--transition-glitch);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .cyber-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-neon);
+    }
+
+    .cyber-btn:active {
+      transform: translateY(0);
+    }
+
+    .cyber-btn-danger {
+      background: var(--gradient-danger);
+    }
+
+    .cyber-btn-premium {
+      background: var(--gradient-premium);
+    }
+
+    /* Forms */
+    .form-switch {
+      text-align: center;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .form-switch a {
+      color: var(--neon-green);
+      text-decoration: none;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .form-switch a:hover {
+      text-decoration: underline;
+    }
+
+    .error-box {
+      background: rgba(255, 71, 87, 0.1);
+      border: 1px solid rgba(255, 71, 87, 0.3);
+      color: #ff6b81;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 15px;
+      font-size: 13px;
+      display: none;
+    }
+
+    /* ===== APP LAYOUT ===== */
+    .app-screen {
+      width: 100%;
+      height: 100%;
+      display: none;
+      flex-direction: column;
+    }
+
+    /* Header */
+    .app-header {
+      padding: 15px 20px;
+      background: rgba(10, 10, 15, 0.9);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      z-index: 100;
+    }
+
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-title i {
+      font-size: 24px;
+      color: var(--neon-green);
+    }
+
+    .header-title h2 {
+      font-size: 18px;
+      font-weight: 700;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .notif-btn {
+      position: relative;
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .notif-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: var(--gradient-danger);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      background: var(--gradient-primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: black;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    /* Content Area */
+    .content-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--neon-green) rgba(255, 255, 255, 0.1);
+    }
+
+    .content-area::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .content-area::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+    }
+
+    .content-area::-webkit-scrollbar-thumb {
+      background: var(--neon-green);
+      border-radius: 10px;
+    }
+
+    /* Page Sections */
+    .page-section {
+      display: block;
+    }
+
+    /* Dashboard */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 15px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition-glitch);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--neon-green);
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--gradient-primary);
+    }
+
+    .stat-card.danger::before {
+      background: var(--gradient-danger);
+    }
+
+    .stat-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(0, 255, 136, 0.1);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 15px;
+      color: var(--neon-green);
+    }
+
+    .stat-card.danger .stat-icon {
+      background: rgba(255, 71, 87, 0.1);
+      color: #ff4757;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: 800;
+      margin-bottom: 5px;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .stat-card.danger .stat-value {
+      background: var(--gradient-danger);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.6);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Features Grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .feature-card {
+      background: var(--card-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition-glitch);
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--neon-green);
+      box-shadow: var(--shadow-neon);
+    }
+
+    .feature-icon {
+      width: 50px;
+      height: 50px;
+      background: var(--gradient-primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 15px;
+      color: black;
+      font-size: 20px;
+    }
+
+    .feature-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .feature-desc {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.6);
+      line-height: 1.4;
+    }
+
+    /* Badak Activator */
+    .activator-section {
+      background: var(--card-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 25px;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .section-title i {
+      color: var(--neon-green);
+      font-size: 20px;
+    }
+
+    .section-title h3 {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .phone-input-container {
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid rgba(0, 255, 136, 0.2);
+      border-radius: 10px;
+      padding: 5px 15px;
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .country-code {
+      color: var(--neon-green);
+      font-weight: 600;
+      margin-right: 10px;
+    }
+
+    .phone-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 16px;
+      padding: 15px 0;
+      outline: none;
+    }
+
+    .phone-input::placeholder {
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .timer-display {
+      background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), transparent);
+      border: 1px solid rgba(0, 255, 136, 0.2);
+      border-radius: 15px;
+      padding: 25px;
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .timer-icon {
+      font-size: 40px;
+      color: var(--neon-green);
+      margin-bottom: 15px;
+      animation: pulse 2s infinite;
+    }
+
+    .timer-label {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.7);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    .timer {
+      font-size: 36px;
+      font-weight: 800;
+      font-family: 'Courier New', monospace;
+      color: var(--neon-green);
+      text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+    }
+
+    .badak-button {
+      width: 100%;
+      padding: 20px;
+      background: var(--gradient-primary);
+      border: none;
+      border-radius: 15px;
+      color: black;
+      font-weight: 800;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      transition: var(--transition-glitch);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .badak-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0, 255, 136, 0.4);
+    }
+
+    /* Profile Section */
+    .profile-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .profile-avatar {
+      width: 100px;
+      height: 100px;
+      background: var(--gradient-premium);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      color: black;
+      font-size: 40px;
+      font-weight: 800;
+      border: 3px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .profile-name {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 5px;
+      background: var(--gradient-premium);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .profile-status {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.6);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .info-grid {
+      background: var(--card-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .info-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .info-label {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.6);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .info-value {
+      font-size: 14px;
+      font-weight: 600;
+      text-align: right;
+      max-width: 60%;
+      word-break: break-all;
+    }
+
+    .info-value.email {
+      color: var(--neon-green);
+    }
+
+    .info-value.id {
+      color: var(--neon-cyan);
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+    }
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      background: rgba(10, 10, 15, 0.95);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid var(--glass-border);
+      display: flex;
+      padding: 10px 20px;
+      position: relative;
+      z-index: 100;
+    }
+
+    .nav-item {
+      flex: 1;
+      text-align: center;
+      padding: 10px 0;
+      cursor: pointer;
+      transition: var(--transition-glitch);
+      position: relative;
+    }
+
+    .nav-item.active {
+      color: var(--neon-green);
+    }
+
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 4px;
+      background: var(--neon-green);
+      border-radius: 50%;
+    }
+
+    .nav-icon {
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    .nav-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-content {
+      background: var(--card-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 30px;
+      width: 100%;
+      max-width: 400px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .modal-icon {
+      font-size: 50px;
+      text-align: center;
+      margin-bottom: 20px;
+      color: #ff4757;
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    .modal-message {
+      text-align: center;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 25px;
+      line-height: 1.5;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 15px;
+    }
+
+    .modal-btn {
+      flex: 1;
+      padding: 15px;
+      border-radius: 10px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: var(--transition-glitch);
+    }
+
+    .modal-btn-cancel {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+
+    .modal-btn-cancel:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .modal-btn-confirm {
+      background: var(--gradient-danger);
+      color: white;
+    }
+
+    .modal-btn-confirm:hover {
+      transform: translateY(-2px);
+    }
+
+    /* Toast */
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 2000;
+    }
+
+    .toast {
+      background: var(--card-bg);
+      border: 1px solid rgba(0, 255, 136, 0.3);
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      animation: slideIn 0.3s ease;
+      max-width: 300px;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    .toast-icon {
+      width: 30px;
+      height: 30px;
+      background: var(--gradient-primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: black;
+      font-size: 12px;
+    }
+
+    .toast-content {
+      flex: 1;
+    }
+
+    .toast-title {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .toast-message {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    /* Loading */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.9);
+      backdrop-filter: blur(10px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 3000;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 3px solid rgba(0, 255, 136, 0.3);
+      border-top-color: var(--neon-green);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .cyber-card {
+        padding: 30px 20px;
+      }
+      
+      .stats-grid,
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .modal-buttons {
+        flex-direction: column;
+      }
+      
+      .timer {
+        font-size: 28px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Cyberpunk Background -->
+  <div class="cyber-bg"></div>
+  <div class="grid-lines"></div>
+
+  <!-- Main Wrapper -->
+  <div class="main-wrapper">
+    <!-- Login Screen -->
+    <div class="login-screen" id="loginScreen">
+      <div class="cyber-card">
+        <div class="logo-header">
+          <div class="logo-icon">
+            <i class="fab fa-whatsapp"></i>
+          </div>
+          <h1 class="glitch-text">WA BADAK</h1>
+          <p>Premium WhatsApp Automation</p>
+        </div>
+
+        <!-- Login Form -->
+        <div id="loginForm">
+          <div class="input-group">
+            <label class="input-label">Email</label>
+            <input type="email" id="loginEmail" class="cyber-input" placeholder="admin@wabadak.com">
+          </div>
+
+          <div class="input-group">
+            <label class="input-label">Password</label>
+            <input type="password" id="loginPassword" class="cyber-input" placeholder="********">
+          </div>
+
+          <div id="loginError" class="error-box"></div>
+
+          <button class="cyber-btn" onclick="login()" id="loginBtn">
+            <i class="fas fa-sign-in-alt"></i>
+            <span id="loginBtnText">LOGIN</span>
+          </button>
+
+          <div class="form-switch">
+            <a onclick="showRegister()">
+              <i class="fas fa-user-plus"></i>
+              Buat Akun Baru
+            </a>
+          </div>
+        </div>
+
+        <!-- Register Form -->
+        <div id="registerForm" style="display: none;">
+          <div class="input-group">
+            <label class="input-label">Email</label>
+            <input type="email" id="registerEmail" class="cyber-input" placeholder="email@example.com">
+          </div>
+
+          <div class="input-group">
+            <label class="input-label">Password</label>
+            <input type="password" id="registerPassword" class="cyber-input" placeholder="Minimal 8 karakter">
+          </div>
+
+          <div class="input-group">
+            <label class="input-label">Konfirmasi Password</label>
+            <input type="password" id="registerConfirm" class="cyber-input" placeholder="Ulangi password">
+          </div>
+
+          <div id="registerError" class="error-box"></div>
+
+          <button class="cyber-btn" onclick="register()" id="registerBtn">
+            <i class="fas fa-user-plus"></i>
+            <span id="registerBtnText">BUAT AKUN</span>
+          </button>
+
+          <div class="form-switch">
+            <a onclick="showLogin()">
+              <i class="fas fa-sign-in-alt"></i>
+              Sudah Punya Akun?
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- App Screen -->
+    <div class="app-screen" id="appScreen">
+      <!-- Header -->
+      <div class="app-header">
+        <div class="header-title">
+          <i class="fab fa-whatsapp"></i>
+          <h2 id="pageTitle">Dashboard</h2>
+        </div>
+
+        <div class="header-actions">
+          <button class="notif-btn" onclick="showToast('Belum ada notifikasi', 'info')">
+            <i class="fas fa-bell"></i>
+            <span class="notif-badge">3</span>
+          </button>
+          
+          <div class="user-avatar" onclick="showPage('profile')" id="userAvatar">
+            U
+          </div>
+        </div>
+      </div>
+
+      <!-- Content Area -->
+      <div class="content-area" id="contentArea">
+        <!-- Dashboard Page -->
+        <div class="page-section" id="homePage">
+          <!-- Stats -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-bolt"></i>
+              </div>
+              <div class="stat-value" id="totalBadak">0</div>
+              <div class="stat-label">Badak Aktif</div>
+            </div>
+
+            <div class="stat-card danger">
+              <div class="stat-icon">
+                <i class="fas fa-clock"></i>
+              </div>
+              <div class="stat-value" id="totalExpired">0</div>
+              <div class="stat-label">Nonbadak</div>
+            </div>
+          </div>
+
+          <!-- Features -->
+          <div class="features-grid">
+            <div class="feature-card" onclick="showPage('badak')">
+              <div class="feature-icon">
+                <i class="fas fa-rocket"></i>
+              </div>
+              <div class="feature-title">Gas Badak</div>
+              <div class="feature-desc">Aktifkan fitur premium</div>
+            </div>
+
+            <div class="feature-card" onclick="showToast('Coming Soon!', 'info')">
+              <div class="feature-icon">
+                <i class="fas fa-chart-line"></i>
+              </div>
+              <div class="feature-title">Analytics</div>
+              <div class="feature-desc">Statistik lengkap</div>
+            </div>
+
+            <div class="feature-card" onclick="showToast('Coming Soon!', 'info')">
+              <div class="feature-icon">
+                <i class="fas fa-users"></i>
+              </div>
+              <div class="feature-title">Team</div>
+              <div class="feature-desc">Multi user support</div>
+            </div>
+
+            <div class="feature-card" onclick="showToast('Coming Soon!', 'info')">
+              <div class="feature-icon">
+                <i class="fas fa-cog"></i>
+              </div>
+              <div class="feature-title">Settings</div>
+              <div class="feature-desc">Customization</div>
+            </div>
+          </div>
+
+          <!-- Guide -->
+          <div class="activator-section">
+            <div class="section-title">
+              <i class="fas fa-graduation-cap"></i>
+              <h3>Panduan Cepat</h3>
+            </div>
+            
+            <div style="color: rgba(255, 255, 255, 0.7); font-size: 13px; line-height: 1.6;">
+              1. Masukkan nomor WA di halaman Badak<br>
+              2. Klik GAS BADAK untuk aktivasi<br>
+              3. Fitur aktif 24 jam<br>
+              4. Renew sebelum expired
+            </div>
+          </div>
+        </div>
+
+        <!-- Badak Page -->
+        <div class="page-section" id="badakPage" style="display: none;">
+          <div class="activator-section">
+            <div class="section-title">
+              <i class="fas fa-rocket"></i>
+              <h3>Badak Activator</h3>
+            </div>
+
+            <div class="input-group">
+              <label class="input-label">Nomor WhatsApp</label>
+              <div class="phone-input-container">
+                <span class="country-code">+62</span>
+                <input type="number" id="phoneNumber" class="phone-input" placeholder="812xxxxxxx">
+              </div>
+            </div>
+
+            <div class="timer-display">
+              <div class="timer-icon">
+                <i class="fas fa-clock"></i>
+              </div>
+              <div class="timer-label">Masa Aktif Badak:</div>
+              <div class="timer" id="expiredTimer">24:00:00</div>
+            </div>
+
+            <button class="badak-button" onclick="gasBadak()" id="gasBadakBtn">
+              <i class="fas fa-rocket"></i>
+              <span id="btnText">GAS BADAK</span>
+            </button>
+          </div>
+
+          <div class="activator-section">
+            <div class="section-title">
+              <i class="fas fa-crown"></i>
+              <h3>Fitur Premium</h3>
+            </div>
+            
+            <div style="color: rgba(255, 255, 255, 0.7); font-size: 13px;">
+              ✓ High-speed messaging<br>
+              ✓ Unlimited contacts<br>
+              ✓ Priority support<br>
+              ✓ Advanced analytics
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Page -->
+        <div class="page-section" id="profilePage" style="display: none;">
+          <div class="profile-header">
+            <div class="profile-avatar" id="profileAvatar">U</div>
+            <div class="profile-name" id="profileName">User</div>
+            <div class="profile-status" id="profileStatus">Member</div>
+          </div>
+
+          <div class="info-grid">
+            <div class="info-row">
+              <span class="info-label">Email</span>
+              <span class="info-value email" id="profileEmail">user@email.com</span>
+            </div>
+            
+            <div class="info-row">
+              <span class="info-label">User ID</span>
+              <span class="info-value id" id="profileId">USER-XXXX</span>
+            </div>
+            
+            <div class="info-row">
+              <span class="info-label">Bergabung</span>
+              <span class="info-value" id="profileJoin">1 Jan 2024</span>
+            </div>
+            
+            <div class="info-row">
+              <span class="info-label">Status</span>
+              <span style="color: var(--neon-green); font-size: 12px; font-weight: 600;">ACTIVE</span>
+            </div>
+          </div>
+
+          <button class="cyber-btn cyber-btn-danger" onclick="showLogoutModal()">
+            <i class="fas fa-sign-out-alt"></i>
+            LOGOUT
+          </button>
+        </div>
+      </div>
+
+      <!-- Bottom Navigation -->
+      <div class="bottom-nav">
+        <div class="nav-item active" onclick="showPage('home')">
+          <div class="nav-icon"><i class="fas fa-home"></i></div>
+          <div class="nav-label">Home</div>
+        </div>
+        
+        <div class="nav-item" onclick="showPage('badak')">
+          <div class="nav-icon"><i class="fab fa-whatsapp"></i></div>
+          <div class="nav-label">Badak</div>
+        </div>
+        
+        <div class="nav-item" onclick="showPage('profile')">
+          <div class="nav-icon"><i class="fas fa-user"></i></div>
+          <div class="nav-label">Profile</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Logout Modal -->
+  <div class="modal-overlay" id="logoutModal">
+    <div class="modal-content">
+      <div class="modal-icon">
+        <i class="fas fa-sign-out-alt"></i>
+      </div>
+      
+      <h2 class="modal-title">Yakin Mau Logout?</h2>
+      
+      <p class="modal-message" id="modalMessage">
+        Anda akan keluar dari akun:
+        <br>
+        <strong id="modalEmail">user@email.com</strong>
+      </p>
+      
+      <div class="modal-buttons">
+        <button class="modal-btn modal-btn-cancel" onclick="closeModal()">
+          <i class="fas fa-times"></i>
+          BATAL
+        </button>
+        
+        <button class="modal-btn modal-btn-confirm" onclick="confirmLogout()">
+          <i class="fas fa-check"></i>
+          LOGOUT
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
+    <div style="color: var(--neon-green); font-size: 14px; font-weight: 600;">PROCESSING...</div>
+  </div>
+
+  <script>
+    // ============================================
+    // 🔥 CORE SYSTEM - OPTIMIZED & BUG FIXED
+    // ============================================
+
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCf230zCliSZ9EYLByMnmflqw8sOz328Uc",
+      authDomain: "database-cupz.firebaseapp.com",
+      projectId: "database-cupz",
+      storageBucket: "database-cupz.firebasestorage.app",
+      messagingSenderId: "343357519412",
+      appId: "1:343357519412:web:dce862636c7c459e6a3c61"
+    };
+
+    // Initialize Firebase
+    try {
+      if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+      }
+    } catch (e) {
+      console.error("Firebase init error:", e);
+    }
+
+    // State
+    let currentUser = null;
+    let userData = {};
+    let timerInterval = null;
+
+    // DOM Elements
+    const elements = {
+      loginScreen: document.getElementById('loginScreen'),
+      appScreen: document.getElementById('appScreen'),
+      loginForm: document.getElementById('loginForm'),
+      registerForm: document.getElementById('registerForm'),
+      loginBtn: document.getElementById('loginBtn'),
+      loginBtnText: document.getElementById('loginBtnText'),
+      registerBtn: document.getElementById('registerBtn'),
+      registerBtnText: document.getElementById('registerBtnText'),
+      loginError: document.getElementById('loginError'),
+      registerError: document.getElementById('registerError'),
+      logoutModal: document.getElementById('logoutModal'),
+      modalMessage: document.getElementById('modalMessage'),
+      modalEmail: document.getElementById('modalEmail'),
+      userAvatar: document.getElementById('userAvatar'),
+      pageTitle: document.getElementById('pageTitle'),
+      contentArea: document.getElementById('contentArea'),
+      loadingOverlay: document.getElementById('loadingOverlay'),
+      toastContainer: document.getElementById('toastContainer'),
+      phoneNumber: document.getElementById('phoneNumber'),
+      gasBadakBtn: document.getElementById('gasBadakBtn'),
+      btnText: document.getElementById('btnText'),
+      totalBadak: document.getElementById('totalBadak'),
+      totalExpired: document.getElementById('totalExpired'),
+      expiredTimer: document.getElementById('expiredTimer'),
+      profileAvatar: document.getElementById('profileAvatar'),
+      profileName: document.getElementById('profileName'),
+      profileStatus: document.getElementById('profileStatus'),
+      profileEmail: document.getElementById('profileEmail'),
+      profileId: document.getElementById('profileId'),
+      profileJoin: document.getElementById('profileJoin')
+    };
+
+    // ===== UTILITY FUNCTIONS =====
+    function showLoading(show = true) {
+      elements.loadingOverlay.style.display = show ? 'flex' : 'none';
+    }
+
+    function showToast(message, type = 'success') {
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      
+      const icon = type === 'success' ? 'fa-check' : 
+                  type === 'error' ? 'fa-times' : 
+                  type === 'warning' ? 'fa-exclamation' : 'fa-info';
+      
+      toast.innerHTML = `
+        <div class="toast-icon">
+          <i class="fas ${icon}"></i>
+        </div>
+        <div class="toast-content">
+          <div class="toast-title">${type.toUpperCase()}</div>
+          <div class="toast-message">${message}</div>
+        </div>
+      `;
+      
+      elements.toastContainer.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.remove();
+      }, 4000);
+    }
+
+    function showError(element, message) {
+      element.textContent = message;
+      element.style.display = 'block';
+      setTimeout(() => {
+        element.style.display = 'none';
+      }, 5000);
+    }
+
+    function showPage(page) {
+      // Hide all pages
+      ['homePage', 'badakPage', 'profilePage'].forEach(id => {
+        document.getElementById(id).style.display = 'none';
+      });
+      
+      // Show selected page
+      document.getElementById(`${page}Page`).style.display = 'block';
+      
+      // Update title
+      const titles = {
+        home: 'Dashboard',
+        badak: 'Badak Activator',
+        profile: 'Profile'
+      };
+      elements.pageTitle.textContent = titles[page];
+      
+      // Update nav
+      document.querySelectorAll('.nav-item').forEach((nav, index) => {
+        nav.classList.remove('active');
+        if ((page === 'home' && index === 0) || 
+            (page === 'badak' && index === 1) || 
+            (page === 'profile' && index === 2)) {
+          nav.classList.add('active');
+        }
+      });
+      
+      // Update data if needed
+      if (page === 'profile' && currentUser) {
+        updateProfile();
+      }
+    }
+
+    function showLogin() {
+      elements.loginForm.style.display = 'block';
+      elements.registerForm.style.display = 'none';
+    }
+
+    function showRegister() {
+      elements.loginForm.style.display = 'none';
+      elements.registerForm.style.display = 'block';
+    }
+
+    function showModal() {
+      elements.logoutModal.style.display = 'flex';
+    }
+
+    function closeModal() {
+      elements.logoutModal.style.display = 'none';
+    }
+
+    // ===== AUTH FUNCTIONS =====
+    async function login() {
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+      
+      if (!email || !password) {
+        showError(elements.loginError, 'Email & password harus diisi');
+        return;
+      }
+      
+      showLoading(true);
+      elements.loginBtn.disabled = true;
+      elements.loginBtnText.innerHTML = '<i class="fas fa-spinner fa-spin"></i> LOADING';
+      
+      try {
+        const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
+        currentUser = userCredential.user;
+        
+        // Get user data
+        const userDoc = await firebase.firestore().collection('users').doc(currentUser.uid).get();
+        if (userDoc.exists) {
+          userData = userDoc.data();
+        } else {
+          // Create user if not exists
+          userData = {
+            email: email,
+            createdAt: new Date().toISOString(),
+            totalBadak: 0,
+            totalExpired: 0,
+            plan: 'vip'
+          };
+          await firebase.firestore().collection('users').doc(currentUser.uid).set(userData);
+        }
+        
+        showToast('Login berhasil!', 'success');
+        showApp();
+        
+      } catch (error) {
+        showError(elements.loginError, error.message);
+      } finally {
+        showLoading(false);
+        elements.loginBtn.disabled = false;
+        elements.loginBtnText.textContent = 'LOGIN';
+      }
+    }
+
+    async function register() {
+      const email = document.getElementById('registerEmail').value;
+      const password = document.getElementById('registerPassword').value;
+      const confirm = document.getElementById('registerConfirm').value;
+      
+      if (!email || !password || !confirm) {
+        showError(elements.registerError, 'Semua field harus diisi');
+        return;
+      }
+      
+      if (password.length < 6) {
+        showError(elements.registerError, 'Password minimal 6 karakter');
+        return;
+      }
+      
+      if (password !== confirm) {
+        showError(elements.registerError, 'Password tidak cocok');
+        return;
+      }
+      
+      showLoading(true);
+      elements.registerBtn.disabled = true;
+      elements.registerBtnText.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROCESSING';
+      
+      try {
+        const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+        currentUser = userCredential.user;
+        
+        // Create user document
+        userData = {
+          email: email,
+          createdAt: new Date().toISOString(),
+          totalBadak: 0,
+          totalExpired: 0,
+          plan: 'vip'
+        };
+        await firebase.firestore().collection('users').doc(currentUser.uid).set(userData);
+        
+        showToast('Akun berhasil dibuat!', 'success');
+        showApp();
+        
+      } catch (error) {
+        showError(elements.registerError, error.message);
+      } finally {
+        showLoading(false);
+        elements.registerBtn.disabled = false;
+        elements.registerBtnText.textContent = 'BUAT AKUN';
+      }
+    }
+
+    function showApp() {
+      elements.loginScreen.style.display = 'none';
+      elements.appScreen.style.display = 'flex';
+      
+      // Update user info
+      updateUserInfo();
+      loadUserData();
+      startTimer();
+    }
+
+    function updateUserInfo() {
+      if (!currentUser) return;
+      
+      const initial = currentUser.email.charAt(0).toUpperCase();
+      elements.userAvatar.textContent = initial;
+      elements.profileAvatar.textContent = initial;
+    }
+
+    async function loadUserData() {
+      if (!currentUser) return;
+      
+      try {
+        // Get user stats
+        const userDoc = await firebase.firestore().collection('users').doc(currentUser.uid).get();
+        if (userDoc.exists) {
+          userData = userDoc.data();
+          
+          // Count badak numbers
+          const badakSnapshot = await firebase.firestore().collection('badak_numbers')
+            .where('userId', '==', currentUser.uid)
+            .get();
+          
+          let active = 0, expired = 0;
+          badakSnapshot.forEach(doc => {
+            const data = doc.data();
+            if (data.expiredAt && new Date(data.expiredAt.toDate()) > new Date()) {
+              active++;
+            } else {
+              expired++;
+            }
+          });
+          
+          elements.totalBadak.textContent = active;
+          elements.totalExpired.textContent = expired;
+        }
+      } catch (error) {
+        console.warn("Error loading data:", error);
+      }
+    }
+
+    function updateProfile() {
+      if (!currentUser || !userData) return;
+      
+      const name = currentUser.email.split('@')[0];
+      elements.profileName.textContent = name.charAt(0).toUpperCase() + name.slice(1);
+      elements.profileEmail.textContent = currentUser.email;
+      elements.profileId.textContent = currentUser.uid.substring(0, 8).toUpperCase();
+      elements.profileStatus.textContent = userData.plan === 'vip' ? 'VIP Member' : 'Basic Member';
+      
+      if (userData.createdAt) {
+        const date = new Date(userData.createdAt);
+        elements.profileJoin.textContent = date.toLocaleDateString('id-ID');
+      }
+    }
+
+    // ===== BADAK FUNCTIONS =====
+    async function gasBadak() {
+      const phone = elements.phoneNumber.value.trim();
+      
+      if (!phone) {
+        showToast('Masukkan nomor WhatsApp', 'warning');
+        return;
+      }
+      
+      if (phone.length < 9) {
+        showToast('Nomor terlalu pendek', 'error');
+        return;
+      }
+      
+      if (!currentUser) {
+        showToast('Silakan login dulu', 'error');
+        return;
+      }
+      
+      elements.gasBadakBtn.disabled = true;
+      elements.btnText.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROCESSING';
+      
+      try {
+        const badakData = {
+          userId: currentUser.uid,
+          phone: '+62' + phone,
+          code: 'BADAK-' + Math.random().toString(36).substr(2, 8).toUpperCase(),
+          createdAt: new Date().toISOString(),
+          expiredAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+          status: 'active',
+          plan: 'vip'
+        };
+        
+        // Save to Firestore
+        await firebase.firestore().collection('badak_numbers').add(badakData);
+        
+        // Update user stats
+        await firebase.firestore().collection('users').doc(currentUser.uid).update({
+          totalBadak: firebase.firestore.FieldValue.increment(1)
+        });
+        
+        showToast(`Badak aktif untuk +62${phone}`, 'success');
+        elements.phoneNumber.value = '';
+        
+        // Reload data
+        loadUserData();
+        
+      } catch (error) {
+        showToast('Gagal mengaktifkan Badak', 'error');
+      } finally {
+        elements.gasBadakBtn.disabled = false;
+        elements.btnText.textContent = 'GAS BADAK';
+      }
+    }
+
+    // ===== TIMER FUNCTIONS =====
+    function startTimer() {
+      if (timerInterval) clearInterval(timerInterval);
+      
+      timerInterval = setInterval(() => {
+        updateTimer();
+      }, 1000);
+    }
+
+    function updateTimer() {
+      // This is example timer - replace with actual expiration time
+      const hours = '24';
+      const minutes = '00';
+      const seconds = '00'; // You should calculate this based on actual expiration
+      
+      elements.expiredTimer.textContent = `${hours}:${minutes}:${seconds}`;
+    }
+
+    // ===== LOGOUT FUNCTIONS =====
+    function showLogoutModal() {
+      if (!currentUser) return;
+      
+      elements.modalEmail.textContent = currentUser.email;
+      showModal();
+    }
+
+    async function confirmLogout() {
+      try {
+        showLoading(true);
+        await firebase.auth().signOut();
+        
+        // Reset state
+        currentUser = null;
+        userData = {};
+        
+        // Clear UI
+        elements.loginScreen.style.display = 'flex';
+        elements.appScreen.style.display = 'none';
+        showLogin();
+        
+        // Reset forms
+        document.getElementById('loginEmail').value = '';
+        document.getElementById('loginPassword').value = '';
+        document.getElementById('registerEmail').value = '';
+        document.getElementById('registerPassword').value = '';
+        document.getElementById('registerConfirm').value = '';
+        
+        showToast('Logout berhasil', 'success');
+        
+      } catch (error) {
+        showToast('Gagal logout', 'error');
+      } finally {
+        showLoading(false);
+        closeModal();
+      }
+    }
+
+    // ===== INITIALIZATION =====
+    // Auth state listener
+    firebase.auth().onAuthStateChanged(async (user) => {
+      if (user) {
+        currentUser = user;
+        
+        try {
+          const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
+          if (userDoc.exists) {
+            userData = userDoc.data();
+          }
+          showApp();
+        } catch (error) {
+          console.warn("Auth state error:", error);
+        }
+      }
+    });
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      showLogin();
+    });
+
+    // Enter key support
+    document.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        if (elements.loginScreen.style.display !== 'none') {
+          if (elements.loginForm.style.display !== 'none') {
+            login();
+          } else {
+            register();
+          }
+        }
+      }
+    });
+
+    // ESC to close modal
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeModal();
+      }
+    });
+  </script>
+</body>
+</html>
