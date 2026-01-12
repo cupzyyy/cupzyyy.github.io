@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WA BADAK - ADMIN CHAT ONLY</title>
+  
+  <!-- FIREBASE -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  
+  <!-- FONT AWESOME -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      color: white;
+      height: 100vh;
+      overflow: hidden;
+    }
+    
+    /* ========== HEADER ========== */
+    .admin-header {
+      background: linear-gradient(135deg, #25D366, #128C7E);
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+    }
+    
+    .admin-logo {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .admin-logo i {
+      font-size: 32px;
+    }
+    
+    .admin-logo h1 {
+      font-size: 22px;
+      font-weight: 800;
+    }
+    
+    .admin-logo span {
+      font-size: 13px;
+      opacity: 0.9;
+    }
+    
+    .admin-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+    }
+    
+    .status-indicator {
+      width: 10px;
+      height: 10px;
+      background: #10b981;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+    
+    .admin-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .admin-avatar {
+      width: 40px;
+      height: 40px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 18px;
+    }
+    
+    .logout-btn {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    
+    .logout-btn:hover {
+      background: rgba(255,255,255,0.3);
+    }
+    
+    /* ========== MAIN LAYOUT ========== */
+    .admin-container {
+      display: flex;
+      height: 100vh;
+      padding-top: 80px;
+    }
+    
+    /* ========== SIDEBAR CHAT LIST ========== */
+    .chat-sidebar {
+      width: 350px;
+      background: rgba(0,0,0,0.2);
+      border-right: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .search-box {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .search-box input {
+      flex: 1;
+      padding: 12px 15px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 10px;
+      color: white;
+      font-size: 14px;
+    }
+    
+    .search-box input:focus {
+      outline: none;
+      border-color: #25D366;
+    }
+    
+    .search-btn {
+      background: #25D366;
+      border: none;
+      width: 45px;
+      height: 45px;
+      border-radius: 10px;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    
+    .chat-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+    }
+    
+    .chat-item {
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: 1px solid transparent;
+      position: relative;
+    }
+    
+    .chat-item:hover {
+      background: rgba(255,255,255,0.1);
+    }
+    
+    .chat-item.active {
+      background: rgba(37, 211, 102, 0.15);
+      border-color: #25D366;
+    }
+    
+    .chat-item-unread {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: #EF4444;
+      color: white;
+      font-size: 12px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 50%;
+      min-width: 20px;
+      text-align: center;
+    }
+    
+    .chat-user {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    
+    .chat-avatar {
+      width: 45px;
+      height: 45px;
+      background: linear-gradient(135deg, #25D366, #128C7E);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 18px;
+    }
+    
+    .chat-info h4 {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 3px;
+    }
+    
+    .chat-info p {
+      font-size: 12px;
+      opacity: 0.7;
+    }
+    
+    .chat-preview {
+      font-size: 13px;
+      color: rgba(255,255,255,0.8);
+      margin-top: 5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .chat-time {
+      font-size: 11px;
+      opacity: 0.6;
+      margin-top: 5px;
+    }
+    
+    /* ========== CHAT MAIN AREA ========== */
+    .chat-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: rgba(0,0,0,0.1);
+      position: relative;
+    }
+    
+    .chat-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: rgba(255,255,255,0.5);
+      text-align: center;
+      padding: 40px;
+    }
+    
+    .chat-empty i {
+      font-size: 60px;
+      margin-bottom: 20px;
+      opacity: 0.5;
+    }
+    
+    /* ========== CHAT HEADER ========== */
+    .chat-header {
+      padding: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0,0,0,0.2);
+    }
+    
+    .current-chat-user {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .current-chat-info h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 3px;
+    }
+    
+    .current-chat-info p {
+      font-size: 13px;
+      opacity: 0.8;
+    }
+    
+    .chat-actions {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .chat-action-btn {
+      background: rgba(255,255,255,0.1);
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.3s;
+    }
+    
+    .chat-action-btn:hover {
+      background: rgba(255,255,255,0.2);
+    }
+    
+    /* ========== CHAT MESSAGES ========== */
+    .chat-messages {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      background: rgba(0,0,0,0.05);
+    }
+    
+    .message {
+      max-width: 70%;
+      padding: 12px 16px;
+      border-radius: 18px;
+      position: relative;
+      animation: fadeIn 0.3s;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .message-user {
+      background: rgba(255,255,255,0.1);
+      align-self: flex-start;
+      border-bottom-left-radius: 5px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .message-admin {
+      background: linear-gradient(135deg, #25D366, #128C7E);
+      align-self: flex-end;
+      border-bottom-right-radius: 5px;
+    }
+    
+    .message-sender {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 5px;
+      opacity: 0.9;
+    }
+    
+    .message-text {
+      font-size: 14px;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+    
+    .message-time {
+      font-size: 11px;
+      opacity: 0.7;
+      margin-top: 5px;
+      text-align: right;
+    }
+    
+    .message-user .message-time {
+      text-align: left;
+    }
+    
+    /* ========== CHAT INPUT ========== */
+    .chat-input-area {
+      padding: 20px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      background: rgba(0,0,0,0.2);
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+    }
+    
+    .chat-input {
+      flex: 1;
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
+      color: white;
+      font-size: 14px;
+      resize: none;
+      min-height: 50px;
+      max-height: 150px;
+      font-family: inherit;
+    }
+    
+    .chat-input:focus {
+      outline: none;
+      border-color: #25D366;
+      box-shadow: 0 0 0 2px rgba(37, 211, 102, 0.2);
+    }
+    
+    .chat-input::placeholder {
+      color: rgba(255,255,255,0.5);
+    }
+    
+    .chat-send-btn {
+      background: linear-gradient(135deg, #25D366, #128C7E);
+      border: none;
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      transition: all 0.3s;
+      flex-shrink: 0;
+    }
+    
+    .chat-send-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
+    }
+    
+    .chat-send-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+    
+    /* ========== TYPING INDICATOR ========== */
+    .typing-indicator {
+      display: none;
+      padding: 10px 16px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 18px;
+      align-self: flex-start;
+      font-size: 13px;
+      color: rgba(255,255,255,0.7);
+      font-style: italic;
+      margin-bottom: 15px;
+    }
+    
+    .typing-indicator.active {
+      display: block;
+    }
+    
+    /* ========== SCROLLBAR ========== */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: rgba(0,0,0,0.1);
+      border-radius: 3px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: rgba(37, 211, 102, 0.5);
+      border-radius: 3px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(37, 211, 102, 0.7);
+    }
+    
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 768px) {
+      .chat-sidebar {
+        width: 100%;
+        position: fixed;
+        z-index: 10;
+      }
+      
+      .chat-main {
+        display: none;
+      }
+      
+      .chat-main.active {
+        display: flex;
+      }
+      
+      .back-to-list {
+        display: block !important;
+      }
+    }
+    
+    .back-to-list {
+      display: none;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+      margin-right: 15px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="admin-header">
+  <div class="admin-logo">
+    <i class="fab fa-whatsapp"></i>
+    <div>
+      <h1>WA BADAK ADMIN</h1>
+      <span>Chat Support Only</span>
+    </div>
+  </div>
+  
+  <div class="admin-info">
+    <div class="admin-status">
+      <div class="status-indicator"></div>
+      <span id="onlineStatus">Online</span>
+    </div>
+    
+    <div class="admin-avatar" id="adminAvatar">A</div>
+    
+    <button class="logout-btn" onclick="logoutAdmin()">
+      <i class="fas fa-sign-out-alt"></i> Logout
+    </button>
+  </div>
+</div>
+
+<!-- MAIN CONTAINER -->
+<div class="admin-container">
+  <!-- SIDEBAR - CHAT LIST -->
+  <div class="chat-sidebar">
+    <div class="sidebar-header">
+      <div class="search-box">
+        <input type="text" id="searchChat" placeholder="Search chats...">
+        <button class="search-btn" onclick="searchChats()">
+          <i class="fas fa-search"></i>
+        </button>
+      </div>
+    </div>
+    
+    <div class="chat-list" id="chatList">
+      <!-- Chat items will be loaded here -->
+      <div class="chat-empty">
+        <i class="fas fa-comments"></i>
+        <h3>No chats yet</h3>
+        <p>Waiting for users to start chatting...</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- MAIN CHAT AREA -->
+  <div class="chat-main" id="chatMain">
+    <!-- EMPTY STATE -->
+    <div class="chat-empty" id="emptyChatState">
+      <i class="fas fa-comment-alt"></i>
+      <h3>Select a chat</h3>
+      <p>Choose a conversation from the list to start messaging</p>
+    </div>
+    
+    <!-- ACTIVE CHAT -->
+    <div id="activeChat" style="display: none; height: 100%;">
+      <!-- CHAT HEADER -->
+      <div class="chat-header">
+        <div style="display: flex; align-items: center;">
+          <button class="back-to-list" onclick="backToList()">
+            <i class="fas fa-arrow-left"></i>
+          </button>
+          <div class="current-chat-user">
+            <div class="chat-avatar" id="currentUserAvatar">U</div>
+            <div class="current-chat-info">
+              <h3 id="currentUserName">User Name</h3>
+              <p id="currentUserEmail">user@email.com</p>
+              <p id="currentUserStatus" style="font-size: 12px;">● Online</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="chat-actions">
+          <button class="chat-action-btn" onclick="closeCurrentChat()" title="Close Chat">
+            <i class="fas fa-ban"></i>
+          </button>
+          <button class="chat-action-btn" onclick="refreshChat()" title="Refresh">
+            <i class="fas fa-sync-alt"></i>
+          </button>
+        </div>
+      </div>
+      
+      <!-- CHAT MESSAGES -->
+      <div class="chat-messages" id="chatMessages">
+        <!-- Messages will be loaded here -->
+      </div>
+      
+      <!-- TYPING INDICATOR -->
+      <div class="typing-indicator" id="typingIndicator">
+        <i class="fas fa-pencil-alt"></i> User is typing...
+      </div>
+      
+      <!-- CHAT INPUT -->
+      <div class="chat-input-area">
+        <textarea 
+          class="chat-input" 
+          id="messageInput" 
+          placeholder="Type your reply..." 
+          rows="1"
+          onkeydown="handleInputKeydown(event)"
+          oninput="autoResizeTextarea(this)"
+        ></textarea>
+        <button class="chat-send-btn" id="sendButton" onclick="sendMessage()">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== JAVASCRIPT ========== -->
+<script>
+// ========== FIREBASE CONFIG ==========
+const firebaseConfig = {
+  apiKey: "AIzaSyCf230zCliSZ9EYLByMnmflqw8sOz328Uc",
+  authDomain: "database-cupz.firebaseapp.com",
+  projectId: "database-cupz",
+  storageBucket: "database-cupz.firebasestorage.app",
+  messagingSenderId: "343357519412",
+  appId: "1:343357519412:web:dce862636c7c459e6a3c61"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// ========== GLOBAL VARIABLES ==========
+let currentAdmin = null;
+let currentChatId = null;
+let currentUserId = null;
+let chatListener = null;
+let messagesListener = null;
+let typingListener = null;
+let allChats = [];
+
+// ========== AUTH FUNCTIONS ==========
+function checkAdminAuth() {
+  auth.onAuthStateChanged(async (user) => {
+    if (user) {
+      currentAdmin = user;
+      
+      // Check if user is admin
+      const userDoc = await db.collection('users').doc(user.uid).get();
+      if (userDoc.exists) {
+        const userData = userDoc.data();
+        if (userData.role !== 'admin') {
+          // Not admin, redirect to user page
+          window.location.href = 'index.html';
+          return;
+        }
+        
+        // Update admin info
+        document.getElementById('adminAvatar').textContent = 
+          user.email.charAt(0).toUpperCase();
+        
+        // Set admin online status
+        await db.collection('admins').doc(user.uid).set({
+          email: user.email,
+          online: true,
+          lastActive: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+        
+        // Start chat system
+        loadChats();
+        setupRealtimeChats();
+        
+      } else {
+        // User not in database
+        window.location.href = 'index.html';
+      }
+    } else {
+      // Not logged in
+      window.location.href = 'index.html';
+    }
+  });
+}
+
+async function logoutAdmin() {
+  try {
+    // Set admin offline
+    if (currentAdmin) {
+      await db.collection('admins').doc(currentAdmin.uid).update({
+        online: false,
+        lastActive: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }
+    
+    // Sign out
+    await auth.signOut();
+    window.location.href = 'index.html';
+  } catch (error) {
+    console.error('Logout error:', error);
+  }
+}
+
+// ========== CHAT FUNCTIONS ==========
+async function loadChats() {
+  try {
+    const chatsSnapshot = await db.collection('chats')
+      .orderBy('lastMessageTime', 'desc')
+      .get();
+    
+    const chatList = document.getElementById('chatList');
+    
+    if (chatsSnapshot.empty) {
+      chatList.innerHTML = `
+        <div class="chat-empty">
+          <i class="fas fa-comments"></i>
+          <h3>No chats yet</h3>
+          <p>Waiting for users to start chatting...</p>
+        </div>
+      `;
+      return;
+    }
+    
+    let html = '';
+    allChats = [];
+    
+    chatsSnapshot.forEach(doc => {
+      const chat = doc.data();
+      const chatId = doc.id;
+      const lastTime = chat.lastMessageTime?.toDate() || new Date();
+      const unread = chat.adminUnread || 0;
+      
+      allChats.push({
+        id: chatId,
+        ...chat
+      });
+      
+      html += `
+        <div class="chat-item" onclick="openChat('${chatId}')" id="chatItem-${chatId}">
+          ${unread > 0 ? `<span class="chat-item-unread">${unread}</span>` : ''}
+          
+          <div class="chat-user">
+            <div class="chat-avatar">
+              ${chat.userEmail?.charAt(0).toUpperCase() || 'U'}
+            </div>
+            <div class="chat-info">
+              <h4>${chat.userName || 'User'}</h4>
+              <p>${chat.userEmail || 'No email'}</p>
+            </div>
+          </div>
+          
+          <div class="chat-preview" title="${chat.lastMessage || 'No messages yet'}">
+            ${(chat.lastMessage || 'No messages yet').substring(0, 50)}
+            ${chat.lastMessage?.length > 50 ? '...' : ''}
+          </div>
+          
+          <div class="chat-time">
+            ${getTimeAgo(lastTime)} ago
+            ${chat.status === 'closed' ? ' • Closed' : ''}
+          </div>
+        </div>
+      `;
+    });
+    
+    chatList.innerHTML = html;
+    
+  } catch (error) {
+    console.error('Load chats error:', error);
+    showError('Failed to load chats');
+  }
+}
+
+function setupRealtimeChats() {
+  // Listen for new chats and updates
+  db.collection('chats')
+    .orderBy('lastMessageTime', 'desc')
+    .onSnapshot((snapshot) => {
+      const chatList = document.getElementById('chatList');
+      let html = '';
+      
+      snapshot.docChanges().forEach((change) => {
+        if (change.type === 'added' || change.type === 'modified') {
+          const chat = change.doc.data();
+          const chatId = change.doc.id;
+          const lastTime = chat.lastMessageTime?.toDate() || new Date();
+          const unread = chat.adminUnread || 0;
+          
+          // Update or add chat item
+          const existingItem = document.getElementById(`chatItem-${chatId}`);
+          
+          if (existingItem) {
+            // Update existing
+            existingItem.innerHTML = `
+              ${unread > 0 ? `<span class="chat-item-unread">${unread}</span>` : ''}
+              
+              <div class="chat-user">
+                <div class="chat-avatar">
+                  ${chat.userEmail?.charAt(0).toUpperCase() || 'U'}
+                </div>
+                <div class="chat-info">
+                  <h4>${chat.userName || 'User'}</h4>
+                  <p>${chat.userEmail || 'No email'}</p>
+                </div>
+              </div>
+              
+              <div class="chat-preview" title="${chat.lastMessage || 'No messages yet'}">
+                ${(chat.lastMessage || 'No messages yet').substring(0, 50)}
+                ${chat.lastMessage?.length > 50 ? '...' : ''}
+              </div>
+              
+              <div class="chat-time">
+                ${getTimeAgo(lastTime)} ago
+                ${chat.status === 'closed' ? ' • Closed' : ''}
+              </div>
+            `;
+            
+            // Highlight if unread
+            if (unread > 0 && chatId !== currentChatId) {
+              existingItem.style.background = 'rgba(239, 68, 68, 0.1)';
+              existingItem.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+            }
+            
+          } else {
+            // Add new chat item
+            html += `
+              <div class="chat-item" onclick="openChat('${chatId}')" id="chatItem-${chatId}">
+                ${unread > 0 ? `<span class="chat-item-unread">${unread}</span>` : ''}
+                
+                <div class="chat-user">
+                  <div class="chat-avatar">
+                    ${chat.userEmail?.charAt(0).toUpperCase() || 'U'}
+                  </div>
+                  <div class="chat-info">
+                    <h4>${chat.userName || 'User'}</h4>
+                    <p>${chat.userEmail || 'No email'}</p>
+                  </div>
+                </div>
+                
+                <div class="chat-preview" title="${chat.lastMessage || 'No messages yet'}">
+                  ${(chat.lastMessage || 'No messages yet').substring(0, 50)}
+                  ${chat.lastMessage?.length > 50 ? '...' : ''}
+                </div>
+                
+                <div class="chat-time">
+                  ${getTimeAgo(lastTime)} ago
+                  ${chat.status === 'closed' ? ' • Closed' : ''}
+                </div>
+              </div>
+            `;
+          }
+        }
+      });
+      
+      if (html) {
+        chatList.insertAdjacentHTML('afterbegin', html);
+      }
+      
+      // Remove empty state if chats exist
+      if (!snapshot.empty) {
+        const emptyState = chatList.querySelector('.chat-empty');
+        if (emptyState) {
+          emptyState.remove();
+        }
+      }
+      
+    }, (error) => {
+      console.error('Realtime chats error:', error);
+    });
+}
+
+async function openChat(chatId) {
+  if (!currentAdmin) return;
+  
+  try {
+    // Close previous chat listeners
+    if (messagesListener) {
+      messagesListener();
+      messagesListener = null;
+    }
+    
+    if (typingListener) {
+      typingListener();
+      typingListener = null;
+    }
+    
+    currentChatId = chatId;
+    
+    // Get chat data
+    const chatDoc = await db.collection('chats').doc(chatId).get();
+    if (!chatDoc.exists) {
+      showError('Chat not found');
+      return;
+    }
+    
+    const chatData = chatDoc.data();
+    currentUserId = chatData.userId;
+    
+    // Update UI
+    document.getElementById('emptyChatState').style.display = 'none';
+    document.getElementById('activeChat').style.display = 'block';
+    
+    // Update chat header
+    document.getElementById('currentUserName').textContent = 
+      chatData.userName || 'User';
+    document.getElementById('currentUserEmail').textContent = 
+      chatData.userEmail || 'No email';
+    document.getElementById('currentUserAvatar').textContent = 
+      chatData.userEmail?.charAt(0).toUpperCase() || 'U';
+    
+    // Mark chat as active in sidebar
+    document.querySelectorAll('.chat-item').forEach(item => {
+      item.classList.remove('active');
+    });
+    const chatItem = document.getElementById(`chatItem-${chatId}`);
+    if (chatItem) {
+      chatItem.classList.add('active');
+      chatItem.querySelector('.chat-item-unread')?.remove();
+    }
+    
+    // Mark messages as read
+    await markChatAsRead(chatId);
+    
+    // Load messages
+    loadMessages(chatId);
+    
+    // Setup real-time message listener
+    setupMessageListener(chatId);
+    
+    // Setup typing listener
+    setupTypingListener(chatId);
+    
+    // Update responsive view
+    if (window.innerWidth <= 768) {
+      document.querySelector('.chat-sidebar').style.display = 'none';
+      document.querySelector('.chat-main').classList.add('active');
+    }
+    
+  } catch (error) {
+    console.error('Open chat error:', error);
+    showError('Failed to open chat');
+  }
+}
+
+async function markChatAsRead(chatId) {
+  try {
+    // Mark admin unread as 0
+    await db.collection('chats').doc(chatId).update({
+      adminUnread: 0,
+      lastReadByAdmin: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    
+    // Mark all admin messages as read
+    const messagesSnapshot = await db.collection('chat_messages')
+      .where('chatId', '==', chatId)
+      .where('senderRole', '==', 'user')
+      .where('read', '==', false)
+      .get();
+    
+    const batch = db.batch();
+    messagesSnapshot.forEach(doc => {
+      batch.update(doc.ref, { read: true });
+    });
+    
+    await batch.commit();
+    
+  } catch (error) {
+    console.error('Mark as read error:', error);
+  }
+}
+
+async function loadMessages(chatId) {
+  try {
+    const messagesSnapshot = await db.collection('chat_messages')
+      .where('chatId', '==', chatId)
+      .orderBy('timestamp', 'asc')
+      .get();
+    
+    const messagesDiv = document.getElementById('chatMessages');
+    messagesDiv.innerHTML = '';
+    
+    if (messagesSnapshot.empty) {
+      messagesDiv.innerHTML = `
+        <div style="text-align: center; color: rgba(255,255,255,0.5); padding: 40px;">
+          <i class="fas fa-comments"></i>
+          <p>No messages yet</p>
+          <small>Start the conversation</small>
+        </div>
+      `;
+      return;
+    }
+    
+    messagesSnapshot.forEach(doc => {
+      const msg = doc.data();
+      addMessageToUI(msg, false);
+    });
+    
+    // Scroll to bottom
+    setTimeout(() => {
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }, 100);
+    
+  } catch (error) {
+    console.error('Load messages error:', error);
+    showError('Failed to load messages');
+  }
+}
+
+function setupMessageListener(chatId) {
+  messagesListener = db.collection('chat_messages')
+    .where('chatId', '==', chatId)
+    .orderBy('timestamp', 'desc')
+    .limit(1)
+    .onSnapshot((snapshot) => {
+      snapshot.docChanges().forEach((change) => {
+        if (change.type === 'added') {
+          const msg = change.doc.data();
+          
+          // Check if message is already displayed
+          const existingMsg = document.querySelector(`[data-message-id="${change.doc.id}"]`);
+          if (!existingMsg) {
+            addMessageToUI(msg, true);
+            
+            // Mark as read if from user
+            if (msg.senderRole === 'user' && !msg.read) {
+              markMessageAsRead(change.doc.id);
+            }
+            
+            // Update chat last message
+            updateChatLastMessage(chatId, msg.message);
+          }
+        }
+      });
+    }, (error) => {
+      console.error('Message listener error:', error);
+    });
+}
+
+function setupTypingListener(chatId) {
+  typingListener = db.collection('chat_typing')
+    .where('chatId', '==', chatId)
+    .where('userId', '==', currentUserId)
+    .onSnapshot((snapshot) => {
+      const typingIndicator = document.getElementById('typingIndicator');
+      
+      if (!snapshot.empty) {
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          if (data.isTyping) {
+            typingIndicator.classList.add('active');
+            return;
+          }
+        });
+      } else {
+        typingIndicator.classList.remove('active');
+      }
+    });
+}
+
+function addMessageToUI(msg, isNew = false) {
+  const messagesDiv = document.getElementById('chatMessages');
+  
+  // Remove empty state if exists
+  const emptyState = messagesDiv.querySelector('.chat-empty');
+  if (emptyState) {
+    emptyState.remove();
+  }
+  
+  const time = msg.timestamp?.toDate() || new Date();
+  const isAdmin = msg.senderRole === 'admin';
+  const isSystem = msg.senderRole === 'system';
+  
+  const messageDiv = document.createElement('div');
+  messageDiv.className = `message ${isAdmin ? 'message-admin' : 'message-user'}`;
+  messageDiv.setAttribute('data-message-id', msg.id || Date.now());
+  
+  if (isSystem) {
+    messageDiv.style.cssText = `
+      align-self: center;
+      background: rgba(59, 130, 246, 0.2);
+      color: #93c5fd;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      max-width: 90%;
+      text-align: center;
+      font-size: 13px;
+    `;
+    messageDiv.innerHTML = `
+      <div class="message-text">
+        <i class="fas fa-info-circle"></i> ${msg.message}
+      </div>
+      <div class="message-time">
+        ${time.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'})}
+      </div>
+    `;
+  } else {
+    messageDiv.innerHTML = `
+      <div class="message-sender">${isAdmin ? 'You' : (msg.senderName || 'User')}</div>
+      <div class="message-text">${formatMessage(msg.message)}</div>
+      <div class="message-time">
+        ${time.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'})}
+        ${!msg.read && !isAdmin ? ' • <i class="fas fa-check" style="color: #fbbf24;"></i>' : ''}
+        ${msg.read && !isAdmin ? ' • <i class="fas fa-check-double" style="color: #10b981;"></i>' : ''}
+      </div>
+    `;
+  }
+  
+  if (isNew) {
+    messageDiv.style.animation = 'fadeIn 0.3s';
+    messagesDiv.appendChild(messageDiv);
+    
+    // Scroll to bottom
+    setTimeout(() => {
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }, 100);
+  } else {
+    messagesDiv.appendChild(messageDiv);
+  }
+}
+
+function formatMessage(text) {
+  // Simple formatting
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n/g, '<br>')
+    .replace(/`(.*?)`/g, '<code>$1</code>');
+}
+
+async function markMessageAsRead(messageId) {
+  try {
+    await db.collection('chat_messages').doc(messageId).update({
+      read: true
+    });
+  } catch (error) {
+    console.error('Mark message read error:', error);
+  }
+}
+
+async function updateChatLastMessage(chatId, message) {
+  try {
+    await db.collection('chats').doc(chatId).update({
+      lastMessage: message.length > 50 ? message.substring(0, 50) + '...' : message,
+      lastMessageTime: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  } catch (error) {
+    console.error('Update chat error:', error);
+  }
+}
+
+// ========== MESSAGE SENDING ==========
+async function sendMessage() {
+  if (!currentChatId || !currentAdmin) return;
+  
+  const input = document.getElementById('messageInput');
+  const message = input.value.trim();
+  const sendBtn = document.getElementById('sendButton');
+  
+  if (!message) return;
+  
+  // Disable send button
+  sendBtn.disabled = true;
+  sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+  
+  try {
+    // Send message
+    await db.collection('chat_messages').add({
+      chatId: currentChatId,
+      senderId: currentAdmin.uid,
+      senderName: 'Admin',
+      senderRole: 'admin',
+      message: message,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      read: false
+    });
+    
+    // Update chat
+    await db.collection('chats').doc(currentChatId).update({
+      lastMessage: message.length > 50 ? message.substring(0, 50) + '...' : message,
+      lastMessageTime: firebase.firestore.FieldValue.serverTimestamp(),
+      status: 'active',
+      userUnread: firebase.firestore.FieldValue.increment(1)
+    });
+    
+    // Clear input
+    input.value = '';
+    input.style.height = 'auto';
+    
+    // Send notification to user
+    await sendMessageNotification(currentChatId, message);
+    
+  } catch (error) {
+    console.error('Send message error:', error);
+    showError('Failed to send message');
+  } finally {
+    sendBtn.disabled = false;
+    sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
+  }
+}
+
+async function sendMessageNotification(chatId, message) {
+  try {
+    const chatDoc = await db.collection('chats').doc(chatId).get();
+    if (chatDoc.exists) {
+      const chatData = chatDoc.data();
+      
+      await db.collection('notifications').add({
+        userId: chatData.userId,
+        userEmail: chatData.userEmail,
+        type: 'chat_message',
+        title: '💬 New Message from Admin',
+        message: `Admin: ${message.substring(0, 100)}${message.length > 100 ? '...' : ''}`,
+        data: {
+          chatId: chatId
+        },
+        read: false,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }
+  } catch (error) {
+    console.error('Notification error:', error);
+  }
+}
+
+// ========== CHAT MANAGEMENT ==========
+async function closeCurrentChat() {
+  if (!currentChatId) return;
+  
+  if (!confirm('Close this conversation?')) {
+    return;
+  }
+  
+  try {
+    await db.collection('chats').doc(currentChatId).update({
+      status: 'closed',
+      closedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      closedBy: currentAdmin.email
+    });
+    
+    // Show closed message
+    await db.collection('chat_messages').add({
+      chatId: currentChatId,
+      senderId: 'system',
+      senderName: 'System',
+      senderRole: 'system',
+      message: 'Conversation closed by admin.',
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      read: false
+    });
+    
+    showSuccess('Chat closed successfully');
+    
+    // Close chat UI
+    backToList();
+    
+  } catch (error) {
+    console.error('Close chat error:', error);
+    showError('Failed to close chat');
+  }
+}
+
+function refreshChat() {
+  if (currentChatId) {
+    loadMessages(currentChatId);
+    showSuccess('Chat refreshed');
+  }
+}
+
+function searchChats() {
+  const searchTerm = document.getElementById('searchChat').value.toLowerCase();
+  const chatItems = document.querySelectorAll('.chat-item');
+  
+  chatItems.forEach(item => {
+    const text = item.textContent.toLowerCase();
+    if (text.includes(searchTerm)) {
+      item.style.display = 'block';
+    } else {
+      item.style.display = 'none';
+    }
+  });
+}
+
+// ========== UI FUNCTIONS ==========
+function backToList() {
+  document.getElementById('emptyChatState').style.display = 'flex';
+  document.getElementById('activeChat').style.display = 'none';
+  
+  // Remove active class from all chats
+  document.querySelectorAll('.chat-item').forEach(item => {
+    item.classList.remove('active');
+  });
+  
+  // Show sidebar on mobile
+  if (window.innerWidth <= 768) {
+    document.querySelector('.chat-sidebar').style.display = 'block';
+    document.querySelector('.chat-main').classList.remove('active');
+  }
+  
+  // Clean up listeners
+  if (messagesListener) {
+    messagesListener();
+    messagesListener = null;
+  }
+  
+  if (typingListener) {
+    typingListener();
+    typingListener = null;
+  }
+  
+  currentChatId = null;
+  currentUserId = null;
+}
+
+function autoResizeTextarea(textarea) {
+  textarea.style.height = 'auto';
+  textarea.style.height = (textarea.scrollHeight) + 'px';
+  
+  // Limit max height
+  if (textarea.scrollHeight > 150) {
+    textarea.style.height = '150px';
+    textarea.style.overflowY = 'auto';
+  } else {
+    textarea.style.overflowY = 'hidden';
+  }
+}
+
+function handleInputKeydown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+}
+
+// ========== UTILITY FUNCTIONS ==========
+function getTimeAgo(date) {
+  const now = new Date();
+  const diffMs = now - date;
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+  
+  if (diffMins < 1) return 'just now';
+  if (diffMins < 60) return `${diffMins}m`;
+  if (diffHours < 24) return `${diffHours}h`;
+  if (diffDays < 7) return `${diffDays}d`;
+  
+  return date.toLocaleDateString('id-ID');
+}
+
+function showError(message) {
+  // Simple error notification
+  const notification = document.createElement('div');
+  notification.style.cssText = `
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    background: #EF4444;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    z-index: 10000;
+    animation: slideIn 0.3s;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  `;
+  notification.innerHTML = `
+    <i class="fas fa-exclamation-circle"></i>
+    <span>${message}</span>
+  `;
+  
+  document.body.appendChild(notification);
+  
+  setTimeout(() => {
+    notification.style.animation = 'slideIn 0.3s reverse';
+    setTimeout(() => notification.remove(), 300);
+  }, 3000);
+}
+
+function showSuccess(message) {
+  // Simple success notification
+  const notification = document.createElement('div');
+  notification.style.cssText = `
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    background: #10B981;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    z-index: 10000;
+    animation: slideIn 0.3s;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  `;
+  notification.innerHTML = `
+    <i class="fas fa-check-circle"></i>
+    <span>${message}</span>
+  `;
+  
+  document.body.appendChild(notification);
+  
+  setTimeout(() => {
+    notification.style.animation = 'slideIn 0.3s reverse';
+    setTimeout(() => notification.remove(), 300);
+  }, 3000);
+}
+
+// ========== INITIALIZE ==========
+document.addEventListener('DOMContentLoaded', function() {
+  checkAdminAuth();
+  
+  // Auto focus search on load
+  document.getElementById('searchChat').focus();
+  
+  // Update online status periodically
+  setInterval(async () => {
+    if (currentAdmin) {
+      await db.collection('admins').doc(currentAdmin.uid).update({
+        lastActive: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }
+  }, 30000);
+});
+</script>
+
+</body>
+</html>
