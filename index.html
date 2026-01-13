@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WA BADAK PRO V2.0 - CYLEX REFACTOR</title>
+  <!-- FIREBASE -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  
+  <!-- FONT AWESOME -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- GOOGLE FONT -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ========== CYLEX RESET ========== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+    
+    /* ========== LAYOUT CYLEX V2 ========== */
+    .cylex-container {
+      width: 100%;
+      max-width: 450px;
+      background: rgba(30, 41, 59, 0.8);
+      backdrop-filter: blur(20px);
+      border-radius: 25px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 
+        0 30px 60px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+      position: relative;
+    }
+    
+    /* ========== NOTIFICATION SYSTEM V2 ========== */
+    .cylex-notification-manager {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 999999;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      width: 380px;
+      pointer-events: none;
+    }
+    
+    .cylex-notification {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95));
+      backdrop-filter: blur(30px);
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+      position: relative;
+      animation: notificationSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      transform-origin: top right;
+      pointer-events: auto;
+      width: 100%;
+      opacity: 0;
+      transform: translateX(100px) scale(0.9);
+    }
+    
+    @keyframes notificationSlideIn {
+      to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+      }
+    }
+    
+    @keyframes notificationSlideOut {
+      to {
+        opacity: 0;
+        transform: translateX(100px) scale(0.9);
+      }
+    }
+    
+    .notification-exit {
+      animation: notificationSlideOut 0.3s forwards;
+    }
+    
+    .cylex-notification.success {
+      border-left: 5px solid #10b981;
+    }
+    
+    .cylex-notification.error {
+      border-left: 5px solid #ef4444;
+    }
+    
+    .cylex-notification.warning {
+      border-left: 5px solid #f59e0b;
+    }
+    
+    .cylex-notification.info {
+      border-left: 5px solid #3b82f6;
+    }
+    
+    .cylex-notification-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 15px;
+      margin-bottom: 12px;
+    }
+    
+    .cylex-notification-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .cylex-notification.success .cylex-notification-icon {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(34, 197, 94, 0.1));
+      color: #10b981;
+    }
+    
+    .cylex-notification.error .cylex-notification-icon {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.1));
+      color: #ef4444;
+    }
+    
+    .cylex-notification.warning .cylex-notification-icon {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.1));
+      color: #f59e0b;
+    }
+    
+    .cylex-notification.info .cylex-notification-icon {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.1));
+      color: #3b82f6;
+    }
+    
+    .cylex-notification-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 4px;
+      line-height: 1.3;
+    }
+    
+    .cylex-notification-content {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 14px;
+      line-height: 1.5;
+      padding-left: 59px;
+    }
+    
+    .cylex-notification-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: none;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    
+    .cylex-notification-close:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+    
+    .cylex-notification-progress {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, #3b82f6, transparent);
+      transform-origin: left;
+      animation: progressShrink 5s linear forwards;
+    }
+    
+    .cylex-notification.success .cylex-notification-progress {
+      background: linear-gradient(90deg, #10b981, transparent);
+    }
+    
+    .cylex-notification.error .cylex-notification-progress {
+      background: linear-gradient(90deg, #ef4444, transparent);
+    }
+    
+    .cylex-notification.warning .cylex-notification-progress {
+      background: linear-gradient(90deg, #f59e0b, transparent);
+    }
+    
+    @keyframes progressShrink {
+      from { transform: scaleX(1); }
+      to { transform: scaleX(0); }
+    }
+    
+    /* ========== ALERT IN-APP ========== */
+    .cylex-alert {
+      padding: 16px;
+      border-radius: 14px;
+      margin: 15px 0;
+      font-size: 14px;
+      display: none;
+      animation: alertSlideIn 0.3s ease;
+      border: 1px solid transparent;
+      backdrop-filter: blur(10px);
+    }
+    
+    @keyframes alertSlideIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .cylex-alert-success {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(34, 197, 94, 0.05));
+      border-color: rgba(16, 185, 129, 0.2);
+      color: #86efac;
+    }
+    
+    .cylex-alert-error {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(220, 38, 38, 0.05));
+      border-color: rgba(239, 68, 68, 0.2);
+      color: #fca5a5;
+    }
+    
+    .cylex-alert-warning {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(217, 119, 6, 0.05));
+      border-color: rgba(245, 158, 11, 0.2);
+      color: #fde68a;
+    }
+    
+    .cylex-alert-info {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(37, 99, 235, 0.05));
+      border-color: rgba(59, 130, 246, 0.2);
+      color: #93c5fd;
+    }
+    
+    /* ========== HEADER CYLEX V2 ========== */
+    .cylex-header {
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      padding: 30px 25px;
+      text-align: center;
+      position: relative;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .cylex-header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #25D366, transparent);
+    }
+    
+    .cylex-logo {
+      font-size: 48px;
+      color: #25D366;
+      margin-bottom: 15px;
+      filter: drop-shadow(0 0 20px rgba(37, 211, 102, 0.3));
+    }
+    
+    .cylex-title {
+      color: white;
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      background: linear-gradient(135deg, #fff, #cbd5e1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .cylex-subtitle {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+    
+    /* ========== NAVIGATION V2 ========== */
+    .cylex-nav {
+      display: flex;
+      background: rgba(15, 23, 42, 0.5);
+      padding: 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .cylex-nav-item {
+      flex: 1;
+      text-align: center;
+      padding: 16px 5px;
+      color: rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 12px;
+      font-weight: 600;
+      position: relative;
+      background: transparent;
+    }
+    
+    .cylex-nav-item:hover {
+      color: rgba(255, 255, 255, 0.8);
+      background: rgba(255, 255, 255, 0.02);
+    }
+    
+    .cylex-nav-item.active {
+      color: white;
+      background: linear-gradient(180deg, rgba(37, 211, 102, 0.1), transparent);
+    }
+    
+    .cylex-nav-item.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, #25D366, #10b981);
+    }
+    
+    .cylex-nav-icon {
+      font-size: 18px;
+      display: block;
+      margin-bottom: 6px;
+      transition: all 0.3s;
+    }
+    
+    .cylex-nav-item.active .cylex-nav-icon {
+      transform: scale(1.1);
+      filter: drop-shadow(0 0 8px rgba(37, 211, 102, 0.5));
+    }
+    
+    /* ========== PAGES V2 ========== */
+    .cylex-page {
+      display: none;
+      padding: 25px;
+      animation: pageFadeIn 0.3s ease;
+    }
+    
+    @keyframes pageFadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .cylex-page.active {
+      display: block;
+    }
+    
+    /* ========== INPUT STYLES V2 ========== */
+    .cylex-input-group {
+      margin-bottom: 20px;
+    }
+    
+    .cylex-label {
+      display: block;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      padding-left: 5px;
+    }
+    
+    .cylex-input {
+      width: 100%;
+      padding: 14px 18px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1.5px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      color: white;
+      font-size: 15px;
+      transition: all 0.3s;
+      outline: none;
+    }
+    
+    .cylex-input:focus {
+      border-color: #25D366;
+      background: rgba(37, 211, 102, 0.05);
+      box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.1);
+    }
+    
+    .cylex-input::placeholder {
+      color: rgba(255, 255, 255, 0.3);
+    }
+    
+    /* ========== BUTTON V2 ========== */
+    .cylex-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #25D366, #16a34a);
+      border: none;
+      border-radius: 14px;
+      color: white;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .cylex-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transition: 0.5s;
+    }
+    
+    .cylex-btn:hover::before {
+      left: 100%;
+    }
+    
+    .cylex-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 
+        0 10px 25px rgba(37, 211, 102, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.05);
+    }
+    
+    .cylex-btn:active {
+      transform: translateY(0);
+    }
+    
+    /* ========== CHAT FLOAT V2 ========== */
+    .cylex-chat-btn {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, #25D366, #16a34a);
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 22px;
+      cursor: pointer;
+      box-shadow: 
+        0 10px 30px rgba(37, 211, 102, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.05);
+      z-index: 100;
+      border: none;
+      transition: all 0.3s;
+    }
+    
+    .cylex-chat-btn:hover {
+      transform: scale(1.1) rotate(5deg);
+      box-shadow: 
+        0 15px 40px rgba(37, 211, 102, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+    
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+        background: #0f172a;
+      }
+      
+      .cylex-container {
+        border-radius: 20px;
+        max-width: 100%;
+      }
+      
+      .cylex-notification-manager {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        width: auto;
+      }
+      
+      .cylex-notification {
+        padding: 18px;
+      }
+      
+      .cylex-header {
+        padding: 25px 20px;
+      }
+      
+      .cylex-page {
+        padding: 20px;
+      }
+      
+      .cylex-chat-btn {
+        width: 52px;
+        height: 52px;
+        bottom: 20px;
+        right: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NOTIFICATION MANAGER (ELEGAN & TERKONTROL) -->
+<div class="cylex-notification-manager" id="notificationManager"></div>
+
+<div class="cylex-container" id="appContainer">
+  <!-- LOGIN SCREEN -->
+  <div id="loginScreen" style="display: block;">
+    <div class="cylex-header">
+      <div class="cylex-logo">
+        <i class="fab fa-whatsapp"></i>
+      </div>
+      <h1 class="cylex-title">WA BADAK PRO V2</h1>
+      <p class="cylex-subtitle">CYLEX REFACTORED VERSION</p>
+    </div>
+    
+    <div style="padding: 25px;">
+      <div class="cylex-input-group">
+        <label class="cylex-label">Email Address</label>
+        <input type="email" id="loginEmail" class="cylex-input" placeholder="user@example.com">
+      </div>
+      
+      <div class="cylex-input-group">
+        <label class="cylex-label">Password</label>
+        <input type="password" id="loginPassword" class="cylex-input" placeholder="••••••••">
+      </div>
+      
+      <div id="loginAlert" class="cylex-alert"></div>
+      
+      <button class="cylex-btn" onclick="cylexLogin()" id="loginBtn">
+        <span id="loginText">LOGIN</span>
+      </button>
+      
+      <div style="text-align: center; margin-top: 20px; color: rgba(255,255,255,0.5); font-size: 13px;">
+        <span onclick="showRegister()" style="color: #25D366; cursor: pointer; font-weight: 600;">
+          Buat akun baru
+        </span>
+      </div>
+    </div>
+  </div>
+  
+  <!-- REGISTER SCREEN -->
+  <div id="registerScreen" style="display: none;">
+    <div class="cylex-header">
+      <div class="cylex-logo">
+        <i class="fas fa-user-plus"></i>
+      </div>
+      <h1 class="cylex-title">BUAT AKUN BARU</h1>
+      <p class="cylex-subtitle">Dapatkan bonus Rp100</p>
+    </div>
+    
+    <div style="padding: 25px;">
+      <div class="cylex-input-group">
+        <label class="cylex-label">Email Address</label>
+        <input type="email" id="registerEmail" class="cylex-input" placeholder="user@example.com">
+      </div>
+      
+      <div class="cylex-input-group">
+        <label class="cylex-label">Password (min 6 karakter)</label>
+        <input type="password" id="registerPassword" class="cylex-input" placeholder="••••••••">
+      </div>
+      
+      <div class="cylex-input-group">
+        <label class="cylex-label">Kode Referral (Opsional)</label>
+        <input type="text" id="registerReferral" class="cylex-input" placeholder="Bonus tambahan">
+      </div>
+      
+      <div id="registerAlert" class="cylex-alert"></div>
+      
+      <button class="cylex-btn" onclick="cylexRegister()" id="registerBtn">
+        <span id="registerText">DAFTAR SEKARANG</span>
+      </button>
+      
+      <div style="text-align: center; margin-top: 20px; color: rgba(255,255,255,0.5); font-size: 13px;">
+        <span onclick="showLogin()" style="color: #25D366; cursor: pointer; font-weight: 600;">
+          Sudah punya akun? Login
+        </span>
+      </div>
+    </div>
+  </div>
+  
+  <!-- MAIN APP -->
+  <div id="mainApp" style="display: none;">
+    <!-- HEADER -->
+    <div class="cylex-header">
+      <div class="cylex-logo">
+        <i class="fab fa-whatsapp"></i>
+      </div>
+      <h1 class="cylex-title" id="welcomeText">Welcome</h1>
+      <p class="cylex-subtitle">Saldo: <span id="headerBalance" style="color:#25D366;font-weight:700;">Rp0</span></p>
+    </div>
+    
+    <!-- NAVIGATION -->
+    <div class="cylex-nav">
+      <div class="cylex-nav-item active" onclick="showPage('dashboard')">
+        <span class="cylex-nav-icon"><i class="fas fa-home"></i></span>
+        Home
+      </div>
+      <div class="cylex-nav-item" onclick="showPage('badak')">
+        <span class="cylex-nav-icon"><i class="fas fa-bolt"></i></span>
+        Badak
+      </div>
+      <div class="cylex-nav-item" onclick="showPage('referral')">
+        <span class="cylex-nav-icon"><i class="fas fa-users"></i></span>
+        Referral
+      </div>
+      <div class="cylex-nav-item" onclick="showPage('withdraw')">
+        <span class="cylex-nav-icon"><i class="fas fa-wallet"></i></span>
+        Tarik
+      </div>
+      <div class="cylex-nav-item" onclick="showPage('profile')">
+        <span class="cylex-nav-icon"><i class="fas fa-user"></i></span>
+        Profile
+      </div>
+    </div>
+    
+    <!-- DASHBOARD PAGE -->
+    <div id="dashboardPage" class="cylex-page active">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+        <div style="background: rgba(37, 211, 102, 0.1); border: 1px solid rgba(37, 211, 102, 0.2); border-radius: 14px; padding: 16px; text-align: center;">
+          <div style="color: #25D366; font-size: 24px; font-weight: 800;" id="dashboardBalance">Rp0</div>
+          <div style="color: rgba(255,255,255,0.7); font-size: 11px; margin-top: 5px;">SALDO</div>
+        </div>
+        
+        <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 14px; padding: 16px; text-align: center;">
+          <div style="color: #f59e0b; font-size: 24px; font-weight: 800;" id="activeBadak">0</div>
+          <div style="color: rgba(255,255,255,0.7); font-size: 11px; margin-top: 5px;">BADAK AKTIF</div>
+        </div>
+      </div>
+      
+      <button class="cylex-btn" onclick="showPage('badak')" style="margin-bottom: 15px;">
+        <i class="fas fa-bolt"></i>
+        GAS BADAK SEKARANG
+      </button>
+      
+      <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 14px; padding: 18px;">
+        <div style="color: white; font-size: 14px; font-weight: 600; margin-bottom: 12px;">
+          <i class="fas fa-fire" style="color:#25D366;"></i> Panduan Cepat
+        </div>
+        <div style="color: rgba(255,255,255,0.6); font-size: 12px; line-height: 1.6;">
+          <div style="margin-bottom: 8px;">• Masuk ke halaman <strong>Badak</strong></div>
+          <div style="margin-bottom: 8px;">• Masukkan nomor WhatsApp target</div>
+          <div style="margin-bottom: 8px;">• Klik <strong>GAS BADAK</strong> untuk aktivasi</div>
+          <div style="margin-bottom: 8px;">• Badak aktif 24 jam</div>
+          <div>Tarik saldo minimal <strong>Rp10.000</strong></div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- BADAK PAGE -->
+    <div id="badakPage" class="cylex-page">
+      <div class="cylex-input-group">
+        <label class="cylex-label">Nomor WhatsApp Target</label>
+        <div style="display: flex; align-items: center; background: rgba(255,255,255,0.03); border: 1.5px solid rgba(255,255,255,0.1); border-radius: 14px; overflow: hidden;">
+          <div style="padding: 0 16px; color: white; font-weight: 600; font-size: 15px; background: rgba(0,0,0,0.1);">+62</div>
+          <input type="number" id="badakPhone" placeholder="812xxxxxxx" style="flex:1; border:none; background:transparent; padding:14px; color:white; font-size:15px; outline:none;">
+        </div>
+      </div>
+      
+      <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 14px; padding: 16px; text-align: center; margin: 20px 0;">
+        <div style="color: #f59e0b; font-size: 14px; margin-bottom: 8px;">
+          <i class="fas fa-clock"></i> Masa Aktif
+        </div>
+        <div id="badakTimer" style="color: white; font-size: 28px; font-weight: 800; font-family: monospace; letter-spacing: 2px;">24:00:00</div>
+      </div>
+      
+      <button class="cylex-btn" onclick="activateBadak()" id="badakBtn">
+        <i class="fas fa-rocket"></i>
+        <span id="badakText">GAS BADAK</span>
+      </button>
+    </div>
+    
+    <!-- REFERRAL PAGE -->
+    <div id="referralPage" class="cylex-page">
+      <div style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(124, 58, 237, 0.05)); border: 1px solid rgba(139, 92, 246, 0.2); border-radius: 14px; padding: 20px; text-align: center; margin-bottom: 20px;">
+        <div style="color: #8b5cf6; font-size: 13px; margin-bottom: 8px;">
+          <i class="fas fa-gift"></i> KODE REFERRAL ANDA
+        </div>
+        <div style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 14px; margin: 12px 0; font-family: monospace; font-size: 20px; font-weight: 700; color: #fbbf24; letter-spacing: 3px; cursor: pointer;" onclick="copyReferralCode()" id="referralCodeDisplay">
+          LOADING...
+        </div>
+        <div style="color: rgba(255,255,255,0.5); font-size: 11px;">
+          Klik untuk menyalin • Bagikan ke teman
+        </div>
+      </div>
+      
+      <button class="cylex-btn" onclick="shareReferral()" style="background:linear-gradient(135deg, #8b5cf6, #7c3aed);">
+        <i class="fas fa-share-alt"></i>
+        BAGIKAN KE TEMAN
+      </button>
+    </div>
+    
+    <!-- WITHDRAWAL PAGE -->
+    <div id="withdrawPage" class="cylex-page">
+      <div style="text-align: center; margin-bottom: 20px;">
+        <div style="color: rgba(255,255,255,0.7); font-size: 13px;">Saldo Tersedia</div>
+        <div style="color: #fbbf24; font-size: 36px; font-weight: 900;" id="withdrawBalance">Rp0</div>
+      </div>
+      
+      <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 12px; padding: 12px; text-align: center; margin-bottom: 20px; color: #fbbf24; font-size: 12px;">
+        <i class="fas fa-info-circle"></i> Minimal penarikan: Rp10.000
+      </div>
+      
+      <div class="cylex-input-group">
+        <label class="cylex-label">Jumlah Penarikan (Rp)</label>
+        <input type="number" id="withdrawAmount" class="cylex-input" placeholder="Minimal 10000">
+      </div>
+      
+      <div class="cylex-input-group">
+        <label class="cylex-label">Metode Penarikan</label>
+        <select id="withdrawMethod" class="cylex-input">
+          <option value="">Pilih Metode</option>
+          <option value="DANA">DANA</option>
+          <option value="SHOPEE">ShopeePay</option>
+          <option value="OVO">OVO</option>
+          <option value="BANK">Transfer Bank</option>
+        </select>
+      </div>
+      
+      <div class="cylex-input-group">
+        <label class="cylex-label">Nomor Tujuan</label>
+        <input type="text" id="withdrawNumber" class="cylex-input" placeholder="08xxxxxxxxxx">
+      </div>
+      
+      <div id="withdrawAlert" class="cylex-alert"></div>
+      
+      <button class="cylex-btn" onclick="submitWithdrawal()" id="withdrawBtn" style="background:linear-gradient(135deg, #f59e0b, #d97706);">
+        <i class="fas fa-paper-plane"></i>
+        AJUKAN PENARIKAN
+      </button>
+    </div>
+    
+    <!-- PROFILE PAGE -->
+    <div id="profilePage" class="cylex-page">
+      <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 14px; padding: 18px; margin-bottom: 15px;">
+        <div style="color: white; font-size: 16px; font-weight: 700; margin-bottom: 16px;">
+          <i class="fas fa-user-circle" style="color:#25D366;"></i> Akun Saya
+        </div>
+        <div style="color: rgba(255,255,255,0.8); font-size: 13px; margin-bottom: 12px;">
+          <span style="color: rgba(255,255,255,0.5);">Email:</span> 
+          <span id="profileEmail" style="float:right;">-</span>
+        </div>
+        <div style="color: rgba(255,255,255,0.8); font-size: 13px; margin-bottom: 12px;">
+          <span style="color: rgba(255,255,255,0.5);">User ID:</span> 
+          <span id="profileUserId" style="float:right;color:#25D366;font-size:11px;">-</span>
+        </div>
+        <div style="color: rgba(255,255,255,0.8); font-size: 13px; margin-bottom: 12px;">
+          <span style="color: rgba(255,255,255,0.5);">Status:</span> 
+          <span id="profileStatus" style="float:right;color:#10b981;">-</span>
+        </div>
+      </div>
+      
+      <button class="cylex-btn" onclick="cylexLogout()" style="background:linear-gradient(135deg, #ef4444, #dc2626);">
+        <i class="fas fa-sign-out-alt"></i>
+        LOGOUT AKUN
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- CHAT BUTTON -->
+<button class="cylex-chat-btn" onclick="showChatSupport()">
+  <i class="fas fa-headset"></i>
+</button>
+
+<!-- ========== CYLEX JAVASCRIPT V2 ========== -->
+<script>
+// ========== FIREBASE CONFIG ==========
+const firebaseConfig = {
+  apiKey: "AIzaSyCf230zCliSZ9EYLByMnmflqw8sOz328Uc",
+  authDomain: "database-cupz.firebaseapp.com",
+  projectId: "database-cupz",
+  storageBucket: "database-cupz.firebasestorage.app",
+  messagingSenderId: "343357519412",
+  appId: "1:343357519412:web:dce862636c7c459e6a3c61"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// ========== NOTIFICATION MANAGER ==========
+class NotificationManager {
+  constructor() {
+    this.activeNotifications = new Set();
+    this.queue = [];
+    this.maxNotifications = 3;
+    this.cooldown = 1000;
+    this.lastNotificationTime = 0;
+  }
+
+  show(type, title, message, options = {}) {
+    const now = Date.now();
+    
+    // Anti spam protection
+    if (now - this.lastNotificationTime < this.cooldown) {
+      setTimeout(() => this.show(type, title, message, options), 300);
+      return;
+    }
+    
+    this.lastNotificationTime = now;
+
+    if (this.activeNotifications.size >= this.maxNotifications) {
+      this.queue.push({ type, title, message, options });
+      return;
+    }
+
+    const id = 'notif_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    const container = document.getElementById('notificationManager');
+
+    const notification = document.createElement('div');
+    notification.className = `cylex-notification ${type}`;
+    notification.id = id;
+
+    const icons = {
+      success: 'fas fa-check-circle',
+      error: 'fas fa-times-circle',
+      warning: 'fas fa-exclamation-triangle',
+      info: 'fas fa-info-circle'
+    };
+
+    notification.innerHTML = `
+      <button class="cylex-notification-close" onclick="notificationManager.close('${id}')">
+        <i class="fas fa-times"></i>
+      </button>
+      <div class="cylex-notification-progress" style="animation-duration: ${options.duration || 5000}ms;"></div>
+      <div class="cylex-notification-header">
+        <div class="cylex-notification-icon">
+          <i class="${icons[type] || icons.info}"></i>
+        </div>
+        <div>
+          <div class="cylex-notification-title">${title}</div>
+        </div>
+      </div>
+      <div class="cylex-notification-content">
+        ${message}
+      </div>
+    `;
+
+    container.appendChild(notification);
+    this.activeNotifications.add(id);
+
+    setTimeout(() => {
+      notification.style.opacity = '1';
+      notification.style.transform = 'translateX(0) scale(1)';
+    }, 10);
+
+    const duration = options.duration || 5000;
+    if (options.autoClose !== false) {
+      setTimeout(() => this.close(id), duration);
+    }
+
+    return id;
+  }
+
+  close(id) {
+    const notification = document.getElementById(id);
+    if (!notification) return;
+
+    notification.classList.add('notification-exit');
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.parentNode.removeChild(notification);
+      }
+      this.activeNotifications.delete(id);
+      this.processQueue();
+    }, 300);
+  }
+
+  processQueue() {
+    if (this.queue.length > 0 && this.activeNotifications.size < this.maxNotifications) {
+      const next = this.queue.shift();
+      setTimeout(() => {
+        this.show(next.type, next.title, next.message, next.options);
+      }, 500);
+    }
+  }
+
+  clearAll() {
+    this.activeNotifications.forEach(id => this.close(id));
+    this.queue = [];
+  }
+}
+
+const notificationManager = new NotificationManager();
+
+// ========== GLOBAL STATE ==========
+let currentUser = null;
+let userData = {};
+let userBalance = 0;
+let referralCode = '';
+
+// ========== AUTH FUNCTIONS ==========
+function showRegister() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('registerScreen').style.display = 'block';
+}
+
+function showLogin() {
+  document.getElementById('registerScreen').style.display = 'block';
+  document.getElementById('loginScreen').style.display = 'none';
+}
+
+function showAlert(elementId, type, message) {
+  const element = document.getElementById(elementId);
+  if (!element) return;
+
+  element.innerHTML = `
+    <div style="display:flex; align-items:center; gap:10px;">
+      <i class="fas fa-${type === 'success' ? 'check' : 'exclamation'}"></i>
+      ${message}
+    </div>
+  `;
+  element.className = `cylex-alert cylex-alert-${type}`;
+  element.style.display = 'block';
+
+  setTimeout(() => {
+    element.style.display = 'none';
+  }, 5000);
+}
+
+async function cylexLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const btn = document.getElementById('loginBtn');
+  const btnText = document.getElementById('loginText');
+
+  if (!email || !password) {
+    showAlert('loginAlert', 'error', 'Email dan password harus diisi');
+    return;
+  }
+
+  btn.disabled = true;
+  btnText.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+  try {
+    const userCredential = await auth.signInWithEmailAndPassword(email, password);
+    currentUser = userCredential.user;
+    
+    const userDoc = await db.collection('users').doc(currentUser.uid).get();
+    
+    if (userDoc.exists) {
+      userData = userDoc.data();
+      
+      if (userData.role === 'admin') {
+        notificationManager.show('info', 'Admin Login', 'Mengarahkan ke dashboard...');
+        setTimeout(() => window.location.href = 'admin.html', 1500);
+        return;
+      }
+      
+      userBalance = userData.balance || 0;
+      referralCode = userData.referralCode || '';
+      
+      showMainApp();
+      notificationManager.show('success', 'Login Berhasil', `Selamat datang, ${email.split('@')[0]}!`);
+      
+    } else {
+      await createNewUser(email);
+    }
+
+  } catch (error) {
+    console.error('Login error:', error);
+    
+    let errorMsg = error.message;
+    if (error.code === 'auth/user-not-found') errorMsg = 'Email tidak terdaftar';
+    else if (error.code === 'auth/wrong-password') errorMsg = 'Password salah';
+    else if (error.code === 'auth/too-many-requests') errorMsg = 'Terlalu banyak percobaan';
+    
+    showAlert('loginAlert', 'error', errorMsg);
+    btn.disabled = false;
+    btnText.textContent = 'LOGIN';
+  }
+}
+
+async function cylexRegister() {
+  const email = document.getElementById('registerEmail').value.trim();
+  const password = document.getElementById('registerPassword').value;
+  const referral = document.getElementById('registerReferral').value.trim();
+  const btn = document.getElementById('registerBtn');
+  const btnText = document.getElementById('registerText');
+
+  if (!email || !password) {
+    showAlert('registerAlert', 'error', 'Email dan password harus diisi');
+    return;
+  }
+
+  if (password.length < 6) {
+    showAlert('registerAlert', 'error', 'Password minimal 6 karakter');
+    return;
+  }
+
+  btn.disabled = true;
+  btnText.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+  try {
+    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+    currentUser = userCredential.user;
+    
+    await createNewUser(email, referral);
+    
+    showMainApp();
+    notificationManager.show('success', 'Pendaftaran Berhasil', 'Akun Anda telah dibuat!');
+
+  } catch (error) {
+    console.error('Register error:', error);
+    
+    let errorMsg = error.message;
+    if (error.code === 'auth/email-already-in-use') errorMsg = 'Email sudah terdaftar';
+    else if (error.code === 'auth/invalid-email') errorMsg = 'Format email tidak valid';
+    else if (error.code === 'auth/weak-password') errorMsg = 'Password terlalu lemah';
+    
+    showAlert('registerAlert', 'error', errorMsg);
+    btn.disabled = false;
+    btnText.textContent = 'DAFTAR SEKARANG';
+  }
+}
+
+async function createNewUser(email, referral = '') {
+  const newReferralCode = generateReferralCode();
+  let initialBalance = 0;
+  
+  if (referral) {
+    const success = await processReferral(referral, currentUser.uid);
+    if (success) initialBalance = 100;
+  }
+  
+  await db.collection('users').doc(currentUser.uid).set({
+    email: email,
+    role: 'user',
+    referralCode: newReferralCode,
+    balance: initialBalance,
+    referralCount: 0,
+    totalBadak: 0,
+    status: 'active',
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
+  
+  userData = { email, referralCode: newReferralCode, balance: initialBalance };
+  userBalance = initialBalance;
+  referralCode = newReferralCode;
+}
+
+function generateReferralCode() {
+  return Math.random().toString(36).substr(2, 6).toUpperCase();
+}
+
+async function processReferral(refCode, userId) {
+  try {
+    const querySnapshot = await db.collection('users')
+      .where('referralCode', '==', refCode.toUpperCase())
+      .limit(1)
+      .get();
+    
+    if (querySnapshot.empty) return false;
+    
+    const referrerDoc = querySnapshot.docs[0];
+    const referrerId = referrerDoc.id;
+    
+    if (referrerId === userId) return false;
+    
+    await db.collection('users').doc(referrerId).update({
+      balance: firebase.firestore.FieldValue.increment(250),
+      referralCount: firebase.firestore.FieldValue.increment(1)
+    });
+    
+    await db.collection('referrals').add({
+      referrerId,
+      referredId: userId,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    
+    notificationManager.show('success', 'Bonus Referral', 'Anda dapat bonus Rp100 dari referral!');
+    return true;
+    
+  } catch (error) {
+    console.error('Referral error:', error);
+    return false;
+  }
+}
+
+// ========== APP FUNCTIONS ==========
+function showMainApp() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('registerScreen').style.display = 'none';
+  document.getElementById('mainApp').style.display = 'block';
+  
+  updateUserInfo();
+  startBadakTimer();
+  setupRealtimeListener();
+}
+
+function showPage(pageId) {
+  const pages = ['dashboard', 'badak', 'referral', 'withdraw', 'profile'];
+  pages.forEach(page => {
+    document.getElementById(page + 'Page').classList.remove('active');
+    document.querySelectorAll('.cylex-nav-item')[pages.indexOf(page)]?.classList.remove('active');
+  });
+  
+  document.getElementById(pageId + 'Page').classList.add('active');
+  document.querySelectorAll('.cylex-nav-item')[pages.indexOf(pageId)]?.classList.add('active');
+  
+  if (pageId === 'dashboard') updateDashboard();
+  if (pageId === 'referral') loadReferralCode();
+}
+
+function updateUserInfo() {
+  if (!currentUser) return;
+  
+  const username = currentUser.email.split('@')[0];
+  document.getElementById('welcomeText').textContent = `Halo, ${username}!`;
+  updateDashboard();
+}
+
+function updateDashboard() {
+  if (!currentUser) return;
+  
+  document.getElementById('dashboardBalance').textContent = formatRupiah(userBalance);
+  document.getElementById('headerBalance').textContent = formatRupiah(userBalance);
+  document.getElementById('withdrawBalance').textContent = formatRupiah(userBalance);
+  document.getElementById('profileEmail').textContent = currentUser.email;
+  document.getElementById('profileUserId').textContent = currentUser.uid.substring(0, 8) + '...';
+  document.getElementById('profileStatus').textContent = userData.status || 'active';
+}
+
+function formatRupiah(amount) {
+  return 'Rp' + amount.toLocaleString('id-ID');
+}
+
+function startBadakTimer() {
+  const timerElement = document.getElementById('badakTimer');
+  let hours = 24, minutes = 0, seconds = 0;
+  
+  setInterval(() => {
+    seconds--;
+    if (seconds < 0) {
+      seconds = 59;
+      minutes--;
+      if (minutes < 0) {
+        minutes = 59;
+        hours--;
+        if (hours < 0) {
+          hours = 24;
+          notificationManager.show('warning', 'Badak Expired', 'Aktivasi kembali badak Anda');
+        }
+      }
+    }
+    
+    timerElement.textContent = 
+      `${hours.toString().padStart(2, '0')}:` +
+      `${minutes.toString().padStart(2, '0')}:` +
+      `${seconds.toString().padStart(2, '0')}`;
+  }, 1000);
+}
+
+async function activateBadak() {
+  const phone = document.getElementById('badakPhone').value.trim();
+  const btn = document.getElementById('badakBtn');
+  const btnText = document.getElementById('badakText');
+  
+  if (!phone || phone.length < 9) {
+    notificationManager.show('error', 'Error', 'Nomor WhatsApp tidak valid');
+    return;
+  }
+  
+  btn.disabled = true;
+  btnText.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+  
+  try {
+    const badakCode = 'BADAK-' + Math.random().toString(36).substr(2, 8).toUpperCase();
+    
+    await db.collection('badak_numbers').add({
+      userId: currentUser.uid,
+      phone: '+62' + phone,
+      code: badakCode,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    
+    await db.collection('users').doc(currentUser.uid).update({
+      totalBadak: firebase.firestore.FieldValue.increment(1)
+    });
+    
+    notificationManager.show('success', 'Badak Aktif!', 
+      `Badak diaktifkan untuk +62${phone}. Kode: ${badakCode}`);
+    
+    document.getElementById('badakPhone').value = '';
+    updateDashboard();
+    
+  } catch (error) {
+    notificationManager.show('error', 'Error', 'Gagal mengaktifkan badak');
+    console.error('Badak error:', error);
+  } finally {
+    btn.disabled = false;
+    btnText.textContent = 'GAS BADAK';
+  }
+}
+
+function loadReferralCode() {
+  if (referralCode) {
+    document.getElementById('referralCodeDisplay').textContent = referralCode;
+  }
+}
+
+function copyReferralCode() {
+  if (!referralCode) return;
+  
+  navigator.clipboard.writeText(referralCode).then(() => {
+    notificationManager.show('success', 'Berhasil', 'Kode referral disalin!');
+  });
+}
+
+function shareReferral() {
+  if (!referralCode) return;
+  
+  const shareText = `🔥 Gabung WA BADAK PRO! 🔥\nKode referral: ${referralCode}\nDaftar: ${window.location.href}?ref=${referralCode}`;
+  
+  if (navigator.share) {
+    navigator.share({ text: shareText });
+  } else {
+    navigator.clipboard.writeText(shareText);
+    notificationManager.show('info', 'Info', 'Link disalin ke clipboard!');
+  }
+}
+
+async function submitWithdrawal() {
+  const amount = parseInt(document.getElementById('withdrawAmount').value);
+  const method = document.getElementById('withdrawMethod').value;
+  const number = document.getElementById('withdrawNumber').value.trim();
+  const btn = document.getElementById('withdrawBtn');
+  
+  if (!amount || amount < 10000) {
+    showAlert('withdrawAlert', 'error', 'Minimal penarikan Rp10.000');
+    return;
+  }
+  
+  if (amount > userBalance) {
+    showAlert('withdrawAlert', 'error', 'Saldo tidak mencukupi');
+    return;
+  }
+  
+  if (!method || !number) {
+    showAlert('withdrawAlert', 'error', 'Lengkapi semua field');
+    return;
+  }
+  
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+  
+  try {
+    await db.collection('withdrawals').add({
+      userId: currentUser.uid,
+      amount: amount,
+      method: method,
+      account: number,
+      status: 'pending',
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    
+    await db.collection('users').doc(currentUser.uid).update({
+      balance: firebase.firestore.FieldValue.increment(-amount)
+    });
+    
+    userBalance -= amount;
+    
+    notificationManager.show('success', 'Penarikan Diajukan', 
+      `Pengajuan penarikan Rp${amount.toLocaleString('id-ID')} berhasil!`);
+    
+    document.getElementById('withdrawAmount').value = '';
+    document.getElementById('withdrawMethod').value = '';
+    document.getElementById('withdrawNumber').value = '';
+    
+    updateDashboard();
+    
+  } catch (error) {
+    notificationManager.show('error', 'Error', 'Gagal mengajukan penarikan');
+    console.error('Withdrawal error:', error);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-paper-plane"></i> AJUKAN PENARIKAN';
+  }
+}
+
+function setupRealtimeListener() {
+  if (!currentUser) return;
+  
+  db.collection('users').doc(currentUser.uid)
+    .onSnapshot((doc) => {
+      if (doc.exists) {
+        const data = doc.data();
+        const oldBalance = userBalance;
+        userBalance = data.balance || 0;
+        
+        if (userBalance !== oldBalance) {
+          updateDashboard();
+        }
+      }
+    });
+}
+
+function showChatSupport() {
+  notificationManager.show('info', 'Support', 
+    'Hubungi admin WhatsApp: 0821-2694-1909\n(Owner: Arya AdiSkibidi)', {
+    duration: 8000,
+    autoClose: true
+  });
+}
+
+function cylexLogout() {
+  notificationManager.show('warning', 'Konfirmasi Logout', 
+    'Yakin ingin logout?', {
+    autoClose: false,
+    duration: 10000
+  });
+  
+  setTimeout(() => {
+    auth.signOut().then(() => {
+      window.location.reload();
+    });
+  }, 2000);
+}
+
+// ========== AUTO LOGIN ==========
+auth.onAuthStateChanged(async (user) => {
+  if (user) {
+    currentUser = user;
+    
+    const userDoc = await db.collection('users').doc(user.uid).get();
+    if (userDoc.exists) {
+      userData = userDoc.data();
+      userBalance = userData.balance || 0;
+      referralCode = userData.referralCode || '';
+      
+      if (userData.role === 'admin') {
+        window.location.href = 'admin.html';
+      } else {
+        showMainApp();
+      }
+    }
+  }
+});
+
+// ========== INIT ==========
+document.addEventListener('DOMContentLoaded', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const refCode = urlParams.get('ref');
+  
+  if (refCode) {
+    document.getElementById('registerReferral').value = refCode;
+  }
+});
+</script>
+
+</body>
+</html>
