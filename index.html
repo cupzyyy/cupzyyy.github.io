@@ -1,0 +1,2622 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>REFERRAL GACOR PRO - EARN MONEY 💰</title>
+  
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  
+  <!-- Font Awesome & Google Font -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ========== VARIABLES & RESET ========== */
+    :root {
+      --primary: #25D366;
+      --primary-dark: #128C7E;
+      --primary-glow: rgba(37, 211, 102, 0.4);
+      --danger: #ff4757;
+      --danger-glow: rgba(255, 71, 87, 0.3);
+      --warning: #ffa502;
+      --warning-glow: rgba(255, 165, 2, 0.3);
+      --gold: #ffd32a;
+      --gold-glow: rgba(255, 211, 42, 0.3);
+      --purple: #8b5cf6;
+      --purple-glow: rgba(139, 92, 246, 0.3);
+      --blue: #2d87f0;
+      --blue-glow: rgba(45, 135, 240, 0.3);
+      --dark: #0f172a;
+      --darker: #0a0f1f;
+      --glass-bg: rgba(255, 255, 255, 0.08);
+      --glass-border: rgba(255, 255, 255, 0.15);
+      --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      --blur-intensity: blur(25px);
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* ========== SMOOTH BODY ANIMATIONS ========== */
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* ========== GLOSSY IOS EFFECTS ========== */
+    .glossy-card {
+      background: var(--glass-bg);
+      backdrop-filter: var(--blur-intensity);
+      -webkit-backdrop-filter: var(--blur-intensity);
+      border-radius: 28px;
+      border: 1px solid var(--glass-border);
+      box-shadow: 
+        var(--glass-shadow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .glossy-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent
+      );
+      transition: 0.6s;
+      z-index: 1;
+    }
+
+    .glossy-card:hover::before {
+      left: 100%;
+    }
+
+    .glossy-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+
+    /* ========== PAGE CONTAINERS ========== */
+    .login-container {
+      display: block;
+      width: 100%;
+      max-width: 420px;
+      animation: slideInUp 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    .app-container {
+      display: none;
+      width: 100%;
+      max-width: 420px;
+      margin: 0 auto;
+      padding-bottom: 80px;
+      animation: fadeIn 0.8s ease-out;
+    }
+
+    /* ========== ANIMATION KEYFRAMES ========== */
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 20px var(--primary-glow); }
+      50% { box-shadow: 0 0 40px var(--primary-glow); }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -1000px 0; }
+      100% { background-position: 1000px 0; }
+    }
+
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* ========== HEADER STYLES ========== */
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+      position: relative;
+    }
+
+    .header i {
+      font-size: 52px;
+      color: var(--primary);
+      filter: drop-shadow(0 0 15px var(--primary-glow));
+      animation: float 3s ease-in-out infinite;
+      margin-bottom: 15px;
+    }
+
+    .header h1 {
+      margin: 12px 0 8px;
+      font-size: 28px;
+      font-weight: 800;
+      background: linear-gradient(45deg, var(--primary), var(--gold));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .header p {
+      margin: 0;
+      font-size: 15px;
+      color: rgba(255, 255, 255, 0.85);
+      font-weight: 300;
+    }
+
+    /* ========== FORM INPUTS ========== */
+    .input-group {
+      margin-top: 20px;
+      position: relative;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 8px;
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 500;
+      padding-left: 5px;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 16px 18px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1.5px solid rgba(255, 255, 255, 0.2);
+      border-radius: 16px;
+      color: white;
+      font-size: 16px;
+      outline: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      font-weight: 400;
+    }
+
+    .input-field:focus {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px var(--primary-glow);
+      transform: translateY(-2px);
+    }
+
+    .input-field::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+      font-weight: 300;
+    }
+
+    /* ========== BUTTONS WITH SMOOTH ANIMATIONS ========== */
+    .btn {
+      width: 100%;
+      padding: 18px;
+      border-radius: 20px;
+      border: none;
+      font-size: 17px;
+      font-weight: 700;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+      margin-top: 25px;
+      letter-spacing: 0.5px;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+      );
+      transition: 0.5s;
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      box-shadow: 0 15px 35px rgba(37, 211, 102, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 20px 45px rgba(37, 211, 102, 0.6);
+      animation: pulseGlow 2s infinite;
+    }
+
+    .btn-primary:active {
+      transform: translateY(-1px) scale(0.98);
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, var(--gold), var(--warning));
+      box-shadow: 0 15px 35px rgba(255, 211, 42, 0.4);
+    }
+
+    .btn-gold:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 45px rgba(255, 211, 42, 0.6);
+    }
+
+    .btn-purple {
+      background: linear-gradient(135deg, var(--purple), #7c3aed);
+      box-shadow: 0 15px 35px rgba(139, 92, 246, 0.4);
+    }
+
+    .btn-purple:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 45px rgba(139, 92, 246, 0.6);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, var(--danger), #ff3838);
+      box-shadow: 0 15px 35px rgba(255, 71, 87, 0.4);
+    }
+
+    .btn-danger:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 45px rgba(255, 71, 87, 0.6);
+    }
+
+    /* ========== USER INFO CARD ========== */
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      margin-bottom: 25px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      animation: slideInUp 0.5s ease;
+    }
+
+    .user-info:hover {
+      background: rgba(255, 255, 255, 0.12);
+      transform: translateX(5px);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .user-avatar {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, var(--primary), var(--blue));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      color: white;
+      font-weight: 800;
+      box-shadow: 0 8px 20px rgba(37, 211, 102, 0.3);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      animation: float 4s ease-in-out infinite;
+    }
+
+    .user-details {
+      flex: 1;
+    }
+
+    .user-email {
+      color: white;
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+
+    .user-role {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.7);
+      background: rgba(255, 255, 255, 0.1);
+      padding: 4px 10px;
+      border-radius: 20px;
+      display: inline-block;
+    }
+
+    /* ========== BOTTOM NAVIGATION ========== */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      display: flex;
+      padding: 15px 0;
+      z-index: 1000;
+      max-width: 420px;
+      margin: 0 auto;
+      border-radius: 30px 30px 0 0;
+      box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .nav-item {
+      flex: 1;
+      text-align: center;
+      padding: 10px 0;
+      cursor: pointer;
+      color: rgba(255, 255, 255, 0.6);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+
+    .nav-item:hover {
+      color: white;
+      transform: translateY(-3px);
+    }
+
+    .nav-item.active {
+      color: white;
+    }
+
+    .nav-item.active .nav-icon {
+      color: var(--primary);
+      transform: scale(1.3) translateY(-5px);
+      text-shadow: 0 0 20px var(--primary-glow);
+    }
+
+    .nav-item.active::after {
+      content: '';
+      position: absolute;
+      bottom: 5px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 5px;
+      height: 5px;
+      background: var(--primary);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--primary);
+    }
+
+    .nav-icon {
+      font-size: 24px;
+      margin-bottom: 6px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: block;
+    }
+
+    .nav-label {
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    /* ========== HOME PAGE LAYOUT ========== */
+    .home-stats-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 30px;
+    }
+
+    .home-stat-card {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 22px;
+      padding: 22px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 130px;
+    }
+
+    .home-stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      border-radius: 22px 22px 0 0;
+    }
+
+    .home-stat-card.balance-card {
+      grid-column: span 2;
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(245, 158, 11, 0.1));
+      border: 1px solid rgba(251, 191, 36, 0.3);
+    }
+
+    .home-stat-card.balance-card::before {
+      background: linear-gradient(90deg, var(--gold), var(--warning));
+    }
+
+    .home-stat-card.success-card::before {
+      background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+    }
+
+    .home-stat-card.failed-card::before {
+      background: linear-gradient(90deg, var(--danger), #ff3838);
+    }
+
+    .home-stat-card.reward-card {
+      grid-column: span 2;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(124, 58, 237, 0.1));
+      border: 1px solid rgba(139, 92, 246, 0.3);
+    }
+
+    .home-stat-card.reward-card::before {
+      background: linear-gradient(90deg, var(--purple), #7c3aed);
+    }
+
+    .home-stat-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .home-stat-number {
+      font-size: 36px;
+      font-weight: 900;
+      color: white;
+      margin: 8px 0;
+      line-height: 1;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      background: linear-gradient(45deg, #fff, #f0f0f0);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .home-stat-title {
+      color: rgba(255, 255, 255, 0.95);
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .home-stat-hint {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.6);
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    /* ========== WITHDRAWAL STATUS BADGES ========== */
+    .status-badge {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+      animation: pulseGlow 2s infinite;
+    }
+
+    .status-pending {
+      background: rgba(245, 158, 11, 0.2);
+      color: var(--warning);
+      border-color: rgba(245, 158, 11, 0.3);
+    }
+
+    .status-approved {
+      background: rgba(34, 197, 94, 0.2);
+      color: #4ade80;
+      border-color: rgba(34, 197, 94, 0.3);
+      animation: pulseGlow 3s infinite;
+    }
+
+    .status-rejected {
+      background: rgba(239, 68, 68, 0.2);
+      color: #f87171;
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    .status-processing {
+      background: rgba(59, 130, 246, 0.2);
+      color: #93c5fd;
+      border-color: rgba(59, 130, 246, 0.3);
+      animation: pulseGlow 1.5s infinite;
+    }
+
+    /* ========== WITHDRAWAL PAGE ========== */
+    .withdrawal-options {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 25px 0;
+    }
+
+    .wallet-option {
+      background: rgba(255, 255, 255, 0.08);
+      border: 2px solid transparent;
+      border-radius: 16px;
+      padding: 18px 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .wallet-option:hover {
+      background: rgba(255, 255, 255, 0.12);
+      transform: translateY(-3px);
+    }
+
+    .wallet-option.active {
+      border-color: var(--primary);
+      background: rgba(37, 211, 102, 0.15);
+      transform: translateY(-5px) scale(1.05);
+      box-shadow: 0 10px 25px rgba(37, 211, 102, 0.3);
+    }
+
+    .wallet-icon {
+      font-size: 28px;
+      margin-bottom: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .wallet-name {
+      color: white;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    /* ========== WITHDRAWAL HISTORY ========== */
+    .history-item {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      animation: slideInUp 0.5s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .history-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 6px;
+      height: 100%;
+    }
+
+    .history-item.pending::before {
+      background: linear-gradient(to bottom, var(--warning), var(--gold));
+    }
+
+    .history-item.success::before {
+      background: linear-gradient(to bottom, var(--primary), #4ade80);
+    }
+
+    .history-item.rejected::before {
+      background: linear-gradient(to bottom, var(--danger), #ff3838);
+    }
+
+    .history-item.processing::before {
+      background: linear-gradient(to bottom, var(--blue), #60a5fa);
+    }
+
+    .history-item:hover {
+      transform: translateX(5px);
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .history-amount {
+      font-weight: 900;
+      color: var(--gold);
+      font-size: 20px;
+      text-shadow: 0 2px 10px rgba(255, 211, 42, 0.3);
+    }
+
+    /* ========== GUIDE BOX ========== */
+    .guide-box {
+      background: linear-gradient(135deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.2));
+      border-radius: 22px;
+      padding: 25px;
+      margin-top: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .guide-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--purple));
+    }
+
+    .guide-title {
+      color: white;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .guide-list {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 14px;
+      line-height: 1.8;
+      padding-left: 10px;
+    }
+
+    .guide-list li {
+      margin-bottom: 12px;
+      padding-left: 15px;
+      position: relative;
+    }
+
+    .guide-list li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--primary);
+      font-weight: bold;
+    }
+
+    /* ========== MODALS ========== */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal-content {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.95));
+      border-radius: 30px;
+      padding: 35px;
+      width: 100%;
+      max-width: 420px;
+      max-height: 90vh;
+      overflow-y: auto;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
+      animation: slideInUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+    }
+
+    .modal-content::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--purple));
+      border-radius: 30px 30px 0 0;
+    }
+
+    /* ========== NOTIFICATION ========== */
+    .notification {
+      position: fixed;
+      top: 25px;
+      right: 25px;
+      padding: 16px 24px;
+      border-radius: 18px;
+      color: white;
+      z-index: 10000;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+      animation: slideInRight 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      max-width: 350px;
+    }
+
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(100px) scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+      }
+    }
+
+    /* ========== LOADING ANIMATIONS ========== */
+    .loading {
+      display: inline-block;
+      width: 22px;
+      height: 22px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: rotate 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+    }
+
+    .loading-lg {
+      width: 50px;
+      height: 50px;
+      border-width: 4px;
+    }
+
+    /* ========== SHIMMER EFFECT ========== */
+    .shimmer {
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.1) 50%,
+        rgba(255, 255, 255, 0) 100%
+      );
+      background-size: 1000px 100%;
+      animation: shimmer 2s infinite;
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 380px) {
+      .home-stats-container {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+      
+      .home-stat-card.balance-card,
+      .home-stat-card.reward-card {
+        grid-column: span 1;
+      }
+      
+      .withdrawal-options {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .modal-content {
+        padding: 25px;
+      }
+      
+      .header h1 {
+        font-size: 24px;
+      }
+    }
+
+    /* ========== SCROLLBAR ========== */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, var(--primary), var(--purple));
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(135deg, var(--primary-dark), #7c3aed);
+    }
+  </style>
+</head>
+<body>
+  <!-- LOGIN PAGE -->
+  <div id="loginPage" class="login-container">
+    <div class="glossy-card" style="padding: 35px;">
+      <div class="header">
+        <i class="fa-solid fa-money-bill-wave"></i>
+        <h1>REFERRAL GACOR PRO</h1>
+        <p>Login untuk mulai menghasilkan uang dari referral</p>
+      </div>
+
+      <div id="loginForm">
+        <div class="input-group">
+          <label><i class="fas fa-envelope"></i> Email Address</label>
+          <input type="email" id="loginEmail" class="input-field" placeholder="email@example.com">
+        </div>
+
+        <div class="input-group">
+          <label><i class="fas fa-lock"></i> Password</label>
+          <input type="password" id="loginPassword" class="input-field" placeholder="••••••••">
+        </div>
+
+        <div class="input-group">
+          <label><i class="fas fa-gift"></i> Kode Referral (Opsional)</label>
+          <input type="text" id="referralCode" class="input-field" placeholder="Masukkan kode referral teman">
+        </div>
+
+        <div id="loginError" class="error-message" style="display: none;"></div>
+
+        <button class="btn btn-primary" onclick="login()" id="loginBtn">
+          <span id="loginBtnText">LOGIN SEKARANG</span>
+        </button>
+
+        <div class="form-toggle" style="text-align: center; margin-top: 25px; color: rgba(255,255,255,0.8);">
+          Belum punya akun? <a onclick="showRegister()" style="color: var(--primary); cursor: pointer; font-weight: 600; text-decoration: none;">Daftar disini</a>
+        </div>
+      </div>
+
+      <div id="registerForm" style="display: none;">
+        <div class="input-group">
+          <label><i class="fas fa-envelope"></i> Email Address</label>
+          <input type="email" id="registerEmail" class="input-field" placeholder="email@example.com">
+        </div>
+
+        <div class="input-group">
+          <label><i class="fas fa-lock"></i> Password</label>
+          <input type="password" id="registerPassword" class="input-field" placeholder="Minimal 6 karakter">
+        </div>
+
+        <div class="input-group">
+          <label><i class="fas fa-lock"></i> Konfirmasi Password</label>
+          <input type="password" id="registerConfirm" class="input-field" placeholder="Ulangi password">
+        </div>
+
+        <div class="input-group">
+          <label><i class="fas fa-gift"></i> Kode Referral (Opsional)</label>
+          <input type="text" id="registerReferral" class="input-field" placeholder="Masukkan kode referral teman">
+        </div>
+
+        <div id="registerError" class="error-message" style="display: none;"></div>
+
+        <button class="btn btn-primary" onclick="register()" id="registerBtn">
+          <span id="registerBtnText">DAFTAR SEKARANG</span>
+        </button>
+
+        <div class="form-toggle" style="text-align: center; margin-top: 25px; color: rgba(255,255,255,0.8);">
+          Sudah punya akun? <a onclick="showLogin()" style="color: var(--primary); cursor: pointer; font-weight: 600; text-decoration: none;">Login disini</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN APP -->
+  <div id="appContainer" class="app-container">
+    <!-- USER INFO BAR -->
+    <div class="user-info" onclick="showAppPage('profilePage')">
+      <div class="user-avatar" id="userAvatar">U</div>
+      <div class="user-details">
+        <div class="user-email" id="userEmail">user@email.com</div>
+        <div class="user-role" id="userRole">User</div>
+      </div>
+      <i class="fas fa-chevron-right" style="color: rgba(255,255,255,0.7); font-size: 18px;"></i>
+    </div>
+
+    <!-- HOME PAGE -->
+    <div id="homePage" class="glossy-card">
+      <div class="header">
+        <i class="fa-solid fa-money-bill-wave"></i>
+        <h1 id="welcomeText">Halo, User!</h1>
+        <p>Monitor pendapatan & referral Anda</p>
+      </div>
+
+      <!-- STATS GRID -->
+      <div class="home-stats-container">
+        <!-- SALDO -->
+        <div class="home-stat-card balance-card" onclick="showAppPage('withdrawalPage')">
+          <div class="home-stat-number" id="userBalance">Rp0</div>
+          <div class="home-stat-title">SALDO ANDA</div>
+          <div class="home-stat-hint">
+            <i class="fas fa-wallet"></i> Ketuk untuk tarik saldo
+          </div>
+        </div>
+
+        <!-- REFERRAL SUKSES -->
+        <div class="home-stat-card success-card">
+          <div class="home-stat-number" id="successReferrals">0</div>
+          <div class="home-stat-title">REFERRAL SUKSES</div>
+          <div class="home-stat-hint">
+            <i class="fas fa-check-circle"></i> Orang bergabung
+          </div>
+        </div>
+
+        <!-- REFERRAL GAGAL -->
+        <div class="home-stat-card failed-card">
+          <div class="home-stat-number" id="failedReferrals">0</div>
+          <div class="home-stat-title">REFERRAL GAGAL</div>
+          <div class="home-stat-hint">
+            <i class="fas fa-times-circle"></i> Tidak aktif
+          </div>
+        </div>
+
+        <!-- REWARD HARI INI -->
+        <div class="home-stat-card reward-card" onclick="showAppPage('referralPage')">
+          <div class="home-stat-number" id="todayReward">Rp0</div>
+          <div class="home-stat-title">REWARD HARI INI</div>
+          <div class="home-stat-hint">
+            <i class="fas fa-gift"></i> Rp350 per referral
+          </div>
+        </div>
+      </div>
+
+      <!-- PANDUAN -->
+      <div class="guide-box">
+        <div class="guide-title">
+          <i class="fas fa-bullhorn"></i> Panduan Referral
+        </div>
+        <ul class="guide-list">
+          <li><strong>Bagikan kode referral</strong> Anda ke teman</li>
+          <li><strong>Teman daftar/LOGIN</strong> dengan kode Anda</li>
+          <li><strong>Anda dapat Rp350</strong> per teman yang bergabung</li>
+          <li><strong>Teman dapat Rp150</strong> bonus bergabung</li>
+          <li><strong>Minimal penarikan</strong> Rp10.000 via DANA/OVO/ShopeePay/Bank</li>
+          <li><strong>Proses penarikan</strong> 1x24 jam setelah disetujui admin</li>
+          <li><strong>Cek riwayat</strong> untuk status penarikan (PENDING/SUKSES/DITOLAK)</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- REFERRAL PAGE -->
+    <div id="referralPage" class="glossy-card" style="display: none;">
+      <div class="header">
+        <i class="fas fa-user-friends"></i>
+        <h1>PROGRAM REFERRAL</h1>
+        <p>Dapatkan Rp350 untuk setiap teman yang bergabung!</p>
+      </div>
+
+      <div class="referral-card" style="
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(124, 58, 237, 0.2));
+        border: 1px solid rgba(139, 92, 246, 0.4);
+        border-radius: 22px;
+        padding: 25px;
+        margin-bottom: 25px;
+        text-align: center;
+      ">
+        <div style="color: var(--gold); margin-bottom: 15px;">
+          <i class="fas fa-gift fa-3x"></i>
+        </div>
+        <h3 style="color: white; margin-bottom: 15px; font-size: 20px;">KODE REFERRAL ANDA</h3>
+        <div class="referral-code" onclick="copyReferralCode()" id="userReferralCode" style="
+          background: rgba(0, 0, 0, 0.3);
+          border: 2px dashed var(--purple);
+          border-radius: 16px;
+          padding: 18px;
+          margin: 18px 0;
+          font-family: 'Courier New', monospace;
+          font-size: 22px;
+          font-weight: 800;
+          color: var(--gold);
+          letter-spacing: 3px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        ">
+          LOADING...
+        </div>
+        <div style="font-size: 13px; color: rgba(255,255,255,0.7); margin-bottom: 20px;">
+          <i class="fas fa-mouse-pointer"></i> Klik kode di atas untuk copy
+        </div>
+
+        <div class="referral-stats" style="
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 15px;
+          margin: 25px 0;
+        ">
+          <div class="referral-stat" style="
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 18px;
+            text-align: center;
+          ">
+            <div class="referral-stat-value" id="totalReferralsPage" style="
+              font-size: 28px;
+              font-weight: 800;
+              color: white;
+              margin: 8px 0;
+            ">0</div>
+            <div class="referral-stat-label" style="
+              font-size: 13px;
+              color: rgba(255, 255, 255, 0.7);
+            ">Referral Sukses</div>
+          </div>
+          <div class="referral-stat" style="
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 18px;
+            text-align: center;
+          ">
+            <div class="referral-stat-value" id="failedReferralsPage" style="
+              font-size: 28px;
+              font-weight: 800;
+              color: white;
+              margin: 8px 0;
+            ">0</div>
+            <div class="referral-stat-label" style="
+              font-size: 13px;
+              color: rgba(255, 255, 255, 0.7);
+            ">Referral Gagal</div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-purple" onclick="shareReferral()" style="margin-bottom: 25px;">
+        <i class="fas fa-share-alt"></i>
+        BAGIKAN REFERRAL
+      </button>
+
+      <!-- TIPS REFERRAL -->
+      <div class="guide-box">
+        <div class="guide-title">
+          <i class="fas fa-lightbulb"></i> Tips Referral Gacor
+        </div>
+        <ul class="guide-list">
+          <li><strong>Share ke WhatsApp Group</strong> untuk hasil maksimal</li>
+          <li><strong>Post di Instagram/Facebook</strong> dengan hashtag #referralgacor</li>
+          <li><strong>Ajakin teman langsung</strong> via chat pribadi</li>
+          <li><strong>Buat konten menarik</strong> tentang cara dapat uang dari referral</li>
+          <li><strong>Update status WhatsApp</strong> dengan link referral Anda</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- WITHDRAWAL PAGE -->
+    <div id="withdrawalPage" class="glossy-card" style="display: none;">
+      <div class="header">
+        <i class="fas fa-wallet"></i>
+        <h1>TARIK SALDO</h1>
+        <p>Tarik pendapatan Anda ke e-wallet pilihan</p>
+      </div>
+
+      <div style="text-align: center; margin-bottom: 25px;">
+        <div style="font-size: 15px; color: rgba(255,255,255,0.7);">Total Saldo Tersedia</div>
+        <div style="font-size: 42px; font-weight: 900; color: var(--gold); margin: 15px 0; text-shadow: 0 0 20px rgba(255, 211, 42, 0.4);" id="withdrawalBalance">
+          Rp0
+        </div>
+      </div>
+
+      <div class="min-withdrawal" style="
+        background: rgba(245, 158, 11, 0.2);
+        border: 1px solid rgba(245, 158, 11, 0.3);
+        border-radius: 16px;
+        padding: 16px;
+        margin: 20px 0;
+        text-align: center;
+        color: var(--warning);
+        font-size: 14px;
+      ">
+        <i class="fas fa-exclamation-circle"></i> Minimal penarikan: <strong>Rp10.000</strong>
+      </div>
+
+      <div class="withdrawal-form">
+        <div class="input-group">
+          <label><i class="fas fa-credit-card"></i> Pilih Metode Penarikan</label>
+          <div class="withdrawal-options">
+            <div class="wallet-option" onclick="selectWallet('dana')" id="walletDana">
+              <div class="wallet-icon" style="color: #00d1d1;"><i class="fas fa-money-bill-wave"></i></div>
+              <div class="wallet-name">DANA</div>
+            </div>
+            <div class="wallet-option" onclick="selectWallet('ovo')" id="walletOvo">
+              <div class="wallet-icon" style="color: #4f46e5;"><i class="fas fa-bolt"></i></div>
+              <div class="wallet-name">OVO</div>
+            </div>
+            <div class="wallet-option" onclick="selectWallet('shopee')" id="walletShopee">
+              <div class="wallet-icon" style="color: #ff5722;"><i class="fas fa-shopping-bag"></i></div>
+              <div class="wallet-name">SHOPEE PAY</div>
+            </div>
+            <div class="wallet-option" onclick="selectWallet('bank')" id="walletBank">
+              <div class="wallet-icon" style="color: var(--gold);"><i class="fas fa-university"></i></div>
+              <div class="wallet-name">BANK</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Wallet Forms -->
+        <div id="danaForm" style="display: none;">
+          <div class="input-group">
+            <label><i class="fas fa-phone"></i> Nomor DANA</label>
+            <input type="number" id="danaNumber" class="input-field" placeholder="0812xxxxxxx">
+          </div>
+          <div class="input-group">
+            <label><i class="fas fa-user"></i> Nama Pemilik DANA</label>
+            <input type="text" id="danaName" class="input-field" placeholder="Nama sesuai di DANA">
+          </div>
+        </div>
+
+        <div id="ovoForm" style="display: none;">
+          <div class="input-group">
+            <label><i class="fas fa-phone"></i> Nomor OVO</label>
+            <input type="number" id="ovoNumber" class="input-field" placeholder="0812xxxxxxx">
+          </div>
+          <div class="input-group">
+            <label><i class="fas fa-user"></i> Nama Pemilik OVO</label>
+            <input type="text" id="ovoName" class="input-field" placeholder="Nama sesuai di OVO">
+          </div>
+        </div>
+
+        <div id="shopeeForm" style="display: none;">
+          <div class="input-group">
+            <label><i class="fas fa-phone"></i> Nomor ShopeePay</label>
+            <input type="number" id="shopeeNumber" class="input-field" placeholder="0812xxxxxxx">
+          </div>
+          <div class="input-group">
+            <label><i class="fas fa-user"></i> Nama Pemilik ShopeePay</label>
+            <input type="text" id="shopeeName" class="input-field" placeholder="Nama sesuai di Shopee">
+          </div>
+        </div>
+
+        <div id="bankForm" style="display: none;">
+          <div class="input-group">
+            <label><i class="fas fa-university"></i> Nama Bank</label>
+            <select id="bankName" class="input-field">
+              <option value="">Pilih Bank</option>
+              <option value="BCA">BCA</option>
+              <option value="BRI">BRI</option>
+              <option value="BNI">BNI</option>
+              <option value="Mandiri">Mandiri</option>
+              <option value="CIMB">CIMB</option>
+              <option value="BSI">BSI</option>
+              <option value="Danamon">Danamon</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label><i class="fas fa-credit-card"></i> Nomor Rekening</label>
+            <input type="number" id="bankNumber" class="input-field" placeholder="1234567890">
+          </div>
+          <div class="input-group">
+            <label><i class="fas fa-user"></i> Nama Pemilik Rekening</label>
+            <input type="text" id="bankAccountName" class="input-field" placeholder="Nama sesuai di rekening">
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label><i class="fas fa-coins"></i> Jumlah Penarikan (Rp)</label>
+          <input type="number" id="withdrawalAmount" class="input-field" placeholder="Minimal 10000" min="10000">
+        </div>
+
+        <div id="withdrawalError" class="error-message" style="
+          background: rgba(239, 68, 68, 0.2);
+          border: 1px solid rgba(239, 68, 68, 0.4);
+          color: #f87171;
+          padding: 14px;
+          border-radius: 14px;
+          margin-top: 18px;
+          font-size: 14px;
+          display: none;
+        "></div>
+        
+        <div id="withdrawalSuccess" class="success-message" style="
+          background: rgba(34, 197, 94, 0.2);
+          border: 1px solid rgba(34, 197, 94, 0.4);
+          color: #86efac;
+          padding: 14px;
+          border-radius: 14px;
+          margin-top: 18px;
+          font-size: 14px;
+          display: none;
+        "></div>
+
+        <button class="btn btn-gold" onclick="submitWithdrawal()" id="withdrawalBtn">
+          <i class="fas fa-paper-plane"></i>
+          WITHDRAW SEKARANG
+        </button>
+      </div>
+
+      <div class="withdrawal-history" style="margin-top: 30px;">
+        <h3 style="color: white; margin-bottom: 20px; font-size: 20px;">
+          <i class="fas fa-history"></i> Riwayat Penarikan
+        </h3>
+        <div id="withdrawalHistory">
+          <div style="text-align: center; color: rgba(255,255,255,0.5); padding: 40px;">
+            <i class="fas fa-receipt fa-3x" style="margin-bottom: 15px;"></i><br>
+            Belum ada riwayat penarikan
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROFILE PAGE -->
+    <div id="profilePage" class="glossy-card" style="display: none;">
+      <div class="header">
+        <i class="fas fa-user-circle"></i>
+        <h1>PROFILE SETTINGS</h1>
+        <p>Kelola akun & data pribadi Anda</p>
+      </div>
+
+      <div class="profile-section" style="
+        margin-bottom: 25px;
+        padding: 25px;
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 22px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+      ">
+        <div class="profile-title">
+          <i class="fas fa-id-card"></i> Informasi Akun
+        </div>
+        <div class="profile-data" id="accountInfo" style="display: grid; gap: 15px;">
+          <div class="data-row" style="display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+            <span class="data-label" style="color: rgba(255, 255, 255, 0.7); font-size: 14px;">Email</span>
+            <span class="data-value" id="profileEmail" style="color: white; font-weight: 600; font-size: 14px;">-</span>
+          </div>
+          <div class="data-row" style="display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+            <span class="data-label" style="color: rgba(255, 255, 255, 0.7); font-size: 14px;">User ID</span>
+            <div style="display: flex; align-items: center;">
+              <span class="data-value user-id" id="profileUserId" style="font-family: 'Courier New', monospace; font-size: 13px; color: var(--primary);">-</span>
+              <button class="copy-btn" onclick="copyToClipboard('profileUserId')" style="
+                background: rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                color: white;
+                padding: 6px 14px;
+                border-radius: 10px;
+                font-size: 12px;
+                cursor: pointer;
+                margin-left: 12px;
+                transition: all 0.2s ease;
+              ">
+                <i class="fas fa-copy"></i>
+              </button>
+            </div>
+          </div>
+          <div class="data-row" style="display: flex; justify-content: space-between; padding: 14px 0;">
+            <span class="data-label" style="color: rgba(255, 255, 255, 0.7); font-size: 14px;">Role</span>
+            <span class="data-value role-user" id="profileRole" style="
+              color: var(--primary);
+              background: rgba(37, 211, 102, 0.2);
+              padding: 6px 14px;
+              border-radius: 20px;
+              font-size: 13px;
+            ">USER</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-section" style="
+        margin-bottom: 25px;
+        padding: 25px;
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 22px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+      ">
+        <div class="profile-title">
+          <i class="fas fa-chart-bar"></i> Statistik Referral
+        </div>
+        <div class="profile-data" style="display: grid; gap: 15px;">
+          <div class="data-row" style="display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+            <span class="data-label" style="color: rgba(255, 255, 255, 0.7); font-size: 14px;">Referral Sukses</span>
+            <span class="data-value" id="profileReferralCount" style="color: white; font-weight: 600; font-size: 14px;">0</span>
+          </div>
+          <div class="data-row" style="display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+            <span class="data-label" style="color: rgba(255, 255, 255, 0.7); font-size: 14px;">Referral Gagal</span>
+            <span class="data-value" id="profileFailedReferrals" style="color: white; font-weight: 600; font-size: 14px;">0</span>
+          </div>
+          <div class="data-row" style="display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+            <span class="data-label" style="color: rgba(255, 255, 255, 0.7); font-size: 14px;">Total Pendapatan</span>
+            <span class="data-value" id="profileTotalEarnings" style="color: var(--gold); font-weight: 700; font-size: 14px;">Rp0</span>
+          </div>
+          <div class="data-row" style="display: flex; justify-content: space-between; padding: 14px 0;">
+            <span class="data-label" style="color: rgba(255, 255, 255, 0.7); font-size: 14px;">Saldo Saat Ini</span>
+            <span class="data-value" id="profileBalance" style="color: var(--primary); font-weight: 800; font-size: 16px;">Rp0</span>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-danger" onclick="confirmLogout()" style="margin-top: 10px;">
+        <i class="fas fa-sign-out-alt"></i>
+        LOGOUT AKUN
+      </button>
+
+      <div style="text-align: center; margin-top: 25px; color: rgba(255,255,255,0.6); font-size: 13px;">
+        <i class="fas fa-info-circle"></i> Data disinkronisasi dengan database Firebase
+      </div>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <div class="bottom-nav">
+      <div class="nav-item active" onclick="showAppPage('homePage')">
+        <div class="nav-icon"><i class="fas fa-home"></i></div>
+        <div class="nav-label">HOME</div>
+      </div>
+      <div class="nav-item" onclick="showAppPage('referralPage')">
+        <div class="nav-icon"><i class="fas fa-user-friends"></i></div>
+        <div class="nav-label">REFERRAL</div>
+      </div>
+      <div class="nav-item" onclick="showAppPage('withdrawalPage')">
+        <div class="nav-icon"><i class="fas fa-wallet"></i></div>
+        <div class="nav-label">WITHDRAW</div>
+      </div>
+      <div class="nav-item" onclick="showAppPage('profilePage')">
+        <div class="nav-icon"><i class="fas fa-user"></i></div>
+        <div class="nav-label">PROFILE</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL REFERRAL SHARE -->
+  <div id="shareModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+        <div class="modal-title" style="color: white; font-size: 22px; font-weight: 700;">
+          <i class="fas fa-share-alt" style="color: var(--purple);"></i> Bagikan Referral
+        </div>
+        <button class="modal-close" onclick="closeModal()" style="
+          background: none;
+          border: none;
+          color: rgba(255, 255, 255, 0.5);
+          font-size: 28px;
+          cursor: pointer;
+          transition: color 0.3s ease;
+        ">&times;</button>
+      </div>
+      
+      <div class="referral-link" id="shareableLink" style="
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 16px;
+        padding: 16px;
+        margin: 20px 0;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.9);
+        word-break: break-all;
+        text-align: center;
+      ">
+        Loading...
+      </div>
+      
+      <div style="margin: 25px 0;">
+        <button class="btn btn-purple" onclick="copyShareLink()" style="width: 100%;">
+          <i class="fas fa-copy"></i> COPY LINK REFERRAL
+        </button>
+      </div>
+      
+      <div style="color: rgba(255,255,255,0.7); font-size: 13px; text-align: center;">
+        Bagikan link ini ke teman untuk dapat bonus Rp350!
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN PANEL MODAL (HIDDEN) -->
+  <div id="adminModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">
+          <i class="fas fa-user-shield" style="color: var(--gold);"></i> Admin Panel
+        </div>
+        <button class="modal-close" onclick="closeAdminModal()">&times;</button>
+      </div>
+      <div id="adminContent">
+        Loading admin panel...
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTIFICATION CONTAINER -->
+  <div id="notificationContainer"></div>
+
+  <script>
+    // ========== FIREBASE CONFIG ==========
+    const firebaseConfig = {
+      apiKey: "AIzaSyCf230zCliSZ9EYLByMnmflqw8sOz328Uc",
+      authDomain: "database-cupz.firebaseapp.com",
+      projectId: "database-cupz",
+      storageBucket: "database-cupz.firebasestorage.app",
+      messagingSenderId: "343357519412",
+      appId: "1:343357519412:web:dce862636c7c459e6a3c61"
+    };
+    
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    
+    // ========== GLOBAL STATE ==========
+    let currentUser = null;
+    let userData = {};
+    let userBalance = 0;
+    let userReferralCode = '';
+    let referralCount = 0;
+    let failedReferrals = 0;
+    let todayReward = 0;
+    let selectedWallet = null;
+    let realTimeListener = null;
+    let withdrawalListener = null;
+    
+    // ========== UTILITY FUNCTIONS ==========
+    function formatRupiah(amount) {
+      if (!amount && amount !== 0) return 'Rp0';
+      return 'Rp' + amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    }
+    
+    function showNotification(type, message, duration = 4000) {
+      const container = document.getElementById('notificationContainer');
+      const notification = document.createElement('div');
+      
+      const colors = {
+        success: { bg: '#10b981', icon: 'check-circle' },
+        error: { bg: '#ef4444', icon: 'exclamation-circle' },
+        warning: { bg: '#f59e0b', icon: 'exclamation-triangle' },
+        info: { bg: '#3b82f6', icon: 'info-circle' }
+      };
+      
+      notification.className = 'notification';
+      notification.style.background = colors[type].bg;
+      notification.style.border = '1px solid rgba(255, 255, 255, 0.2)';
+      notification.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <i class="fas fa-${colors[type].icon}" style="font-size: 18px;"></i>
+          <div style="flex: 1; font-size: 14px; font-weight: 500;">${message}</div>
+          <button onclick="this.parentElement.parentElement.remove()" style="
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.7);
+            cursor: pointer;
+            padding: 4px;
+            font-size: 16px;
+          ">&times;</button>
+        </div>
+      `;
+      
+      container.appendChild(notification);
+      
+      // Auto remove
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.style.animation = 'slideInRight 0.3s ease reverse';
+          setTimeout(() => notification.remove(), 300);
+        }
+      }, duration);
+      
+      // Position notifications
+      const notifications = container.querySelectorAll('.notification');
+      notifications.forEach((notif, index) => {
+        notif.style.top = `${25 + (index * 70)}px`;
+      });
+    }
+    
+    function showError(elementId, message) {
+      const element = document.getElementById(elementId);
+      if (!element) return;
+      element.textContent = message;
+      element.style.display = 'block';
+      element.style.animation = 'slideInUp 0.3s ease';
+      setTimeout(() => {
+        element.style.animation = 'slideInUp 0.3s ease reverse';
+        setTimeout(() => {
+          element.style.display = 'none';
+        }, 300);
+      }, 5000);
+    }
+    
+    function showSuccess(elementId, message) {
+      const element = document.getElementById(elementId);
+      if (!element) return;
+      element.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <i class="fas fa-check-circle" style="color: #10b981; font-size: 18px;"></i>
+          <div>${message}</div>
+        </div>
+      `;
+      element.style.display = 'block';
+      element.style.animation = 'slideInUp 0.3s ease';
+      setTimeout(() => {
+        element.style.animation = 'slideInUp 0.3s ease reverse';
+        setTimeout(() => {
+          element.style.display = 'none';
+        }, 300);
+      }, 5000);
+    }
+    
+    function toggleLoading(buttonId, isLoading, loadingText = '', originalText = '') {
+      const btn = document.getElementById(buttonId);
+      if (!btn) return;
+      
+      if (isLoading) {
+        btn.disabled = true;
+        btn.innerHTML = `
+          <span class="loading" style="margin-right: 8px;"></span>
+          ${loadingText || 'Processing...'}
+        `;
+      } else {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+      }
+    }
+    
+    // ========== AUTH FUNCTIONS ==========
+    function showRegister() {
+      document.getElementById('loginForm').style.display = 'none';
+      document.getElementById('registerForm').style.display = 'block';
+    }
+    
+    function showLogin() {
+      document.getElementById('registerForm').style.display = 'none';
+      document.getElementById('loginForm').style.display = 'block';
+    }
+    
+    function generateReferralCode() {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      let code = '';
+      for (let i = 0; i < 6; i++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return code;
+    }
+    
+    async function processReferral(referralCode, referredUserId) {
+      try {
+        console.log('🔍 Processing referral:', { referralCode, referredUserId });
+        
+        if (!referralCode || typeof referralCode !== 'string') {
+          console.warn('❌ Invalid referral code format');
+          return false;
+        }
+        
+        const refCode = referralCode.trim().toUpperCase();
+        
+        // Find referrer
+        const usersRef = db.collection('users');
+        const querySnapshot = await usersRef.where('referralCode', '==', refCode).get();
+        
+        if (querySnapshot.empty) {
+          console.log('⚠️ Referral code not found');
+          return false;
+        }
+        
+        const referrerDoc = querySnapshot.docs[0];
+        const referrerId = referrerDoc.id;
+        
+        // Prevent self-referral
+        if (referrerId === referredUserId) {
+          console.log('⚠️ Self-referral not allowed');
+          return false;
+        }
+        
+        // Check if already processed
+        const referralCheck = await db.collection('referrals')
+          .where('referredId', '==', referredUserId)
+          .where('referrerCode', '==', refCode)
+          .get();
+        
+        if (!referralCheck.empty) {
+          console.log('⚠️ Referral already processed');
+          return false;
+        }
+        
+        // Add bonuses
+        await db.collection('users').doc(referrerId).update({
+          balance: firebase.firestore.FieldValue.increment(350),
+          referralCount: firebase.firestore.FieldValue.increment(1),
+          todayReward: firebase.firestore.FieldValue.increment(350)
+        });
+        
+        await db.collection('users').doc(referredUserId).update({
+          balance: firebase.firestore.FieldValue.increment(150),
+          hasUsedReferral: true
+        });
+        
+        // Log referral
+        await db.collection('referrals').add({
+          referrerId: referrerId,
+          referredId: referredUserId,
+          referrerCode: refCode,
+          referrerBonus: 350,
+          referredBonus: 150,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+          status: 'success'
+        });
+        
+        console.log('✅ Referral processed successfully');
+        return true;
+        
+      } catch (error) {
+        console.error('❌ Error processing referral:', error);
+        return false;
+      }
+    }
+    
+    async function login() {
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      const referral = document.getElementById('referralCode').value.trim();
+      
+      if (!email || !password) {
+        showError('loginError', 'Email dan password harus diisi');
+        return;
+      }
+      
+      toggleLoading('loginBtn', true, 'Logging in...', 'LOGIN SEKARANG');
+      
+      try {
+        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+        currentUser = userCredential.user;
+        
+        const userDoc = await db.collection('users').doc(currentUser.uid).get();
+        
+        if (userDoc.exists) {
+          userData = userDoc.data();
+          
+          // Process referral if any
+          if (referral && userData && !userData.hasUsedReferral) {
+            console.log('🔍 Processing referral on login:', referral);
+            const success = await processReferral(referral, currentUser.uid);
+            if (success) {
+              await db.collection('users').doc(currentUser.uid).update({
+                hasUsedReferral: true
+              });
+            }
+          }
+        } else {
+          // Create new user
+          const newReferralCode = generateReferralCode();
+          
+          let initialBalance = 0;
+          if (referral) {
+            const success = await processReferral(referral, currentUser.uid);
+            if (success) {
+              initialBalance = 150;
+            }
+          }
+          
+          userData = {
+            email: email,
+            role: 'user',
+            referralCode: newReferralCode,
+            balance: initialBalance,
+            referralCount: 0,
+            failedReferrals: 0,
+            todayReward: 0,
+            totalWithdraw: 0,
+            hasUsedReferral: !!referral,
+            status: 'active',
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+          };
+          
+          await db.collection('users').doc(currentUser.uid).set(userData);
+        }
+        
+        showApp();
+        showNotification('success', 'Login berhasil! 🎉');
+        
+      } catch (error) {
+        console.error('❌ Login error:', error);
+        let errorMsg = 'Login gagal';
+        if (error.code === 'auth/user-not-found') errorMsg = 'Email tidak terdaftar';
+        if (error.code === 'auth/wrong-password') errorMsg = 'Password salah';
+        if (error.code === 'auth/invalid-email') errorMsg = 'Email tidak valid';
+        
+        showError('loginError', errorMsg);
+        toggleLoading('loginBtn', false, '', 'LOGIN SEKARANG');
+      }
+    }
+    
+    async function register() {
+      const email = document.getElementById('registerEmail').value.trim();
+      const password = document.getElementById('registerPassword').value;
+      const confirmPass = document.getElementById('registerConfirm').value;
+      const referral = document.getElementById('registerReferral').value.trim();
+      
+      // Validation
+      if (!email || !password || !confirmPass) {
+        showError('registerError', 'Semua field wajib diisi');
+        return;
+      }
+      
+      if (password.length < 6) {
+        showError('registerError', 'Password minimal 6 karakter');
+        return;
+      }
+      
+      if (password !== confirmPass) {
+        showError('registerError', 'Password tidak cocok');
+        return;
+      }
+      
+      toggleLoading('registerBtn', true, 'Mendaftar...', 'DAFTAR SEKARANG');
+      
+      try {
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        currentUser = userCredential.user;
+        
+        const newReferralCode = generateReferralCode();
+        
+        userData = {
+          email: email,
+          role: 'user',
+          referralCode: newReferralCode,
+          balance: 0,
+          referralCount: 0,
+          failedReferrals: 0,
+          todayReward: 0,
+          totalWithdraw: 0,
+          hasUsedReferral: false,
+          status: 'active',
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        
+        await db.collection('users').doc(currentUser.uid).set(userData);
+        
+        // Process referral bonus
+        if (referral) {
+          await processReferral(referral, currentUser.uid);
+          await db.collection('users').doc(currentUser.uid).update({
+            hasUsedReferral: true
+          });
+        }
+        
+        showApp();
+        showNotification('success', 'Pendaftaran berhasil! 🎉');
+        
+      } catch (error) {
+        console.error('❌ Register error:', error);
+        let errorMsg = 'Pendaftaran gagal';
+        if (error.code === 'auth/email-already-in-use') errorMsg = 'Email sudah terdaftar';
+        if (error.code === 'auth/invalid-email') errorMsg = 'Email tidak valid';
+        if (error.code === 'auth/weak-password') errorMsg = 'Password terlalu lemah';
+        
+        showError('registerError', errorMsg);
+        toggleLoading('registerBtn', false, '', 'DAFTAR SEKARANG');
+      }
+    }
+    
+    // ========== APP FUNCTIONS ==========
+    function showApp() {
+      document.getElementById('loginPage').style.display = 'none';
+      document.getElementById('appContainer').style.display = 'block';
+      
+      // Update user info
+      const username = currentUser.email.split('@')[0];
+      document.getElementById('welcomeText').textContent = `Halo, ${username}!`;
+      document.getElementById('userEmail').textContent = currentUser.email;
+      document.getElementById('userAvatar').textContent = username.charAt(0).toUpperCase();
+      document.getElementById('userRole').textContent = userData.role || 'User';
+      
+      // Load data
+      loadUserData();
+      setupRealTimeListener();
+      checkUrlForReferral();
+    }
+    
+    function showAppPage(pageId) {
+      // Hide all pages
+      document.querySelectorAll('.glossy-card').forEach(card => {
+        if (card.parentElement.id === 'appContainer') {
+          card.style.display = 'none';
+        }
+      });
+      
+      // Show selected page
+      const page = document.getElementById(pageId);
+      if (page) {
+        page.style.display = 'block';
+        page.style.animation = 'slideInUp 0.4s ease';
+      }
+      
+      // Update nav
+      document.querySelectorAll('.nav-item').forEach(nav => {
+        nav.classList.remove('active');
+      });
+      
+      const navItems = document.querySelectorAll('.nav-item');
+      if (pageId === 'homePage') {
+        navItems[0].classList.add('active');
+        loadUserData();
+      }
+      else if (pageId === 'referralPage') {
+        navItems[1].classList.add('active');
+        loadReferralData();
+      }
+      else if (pageId === 'withdrawalPage') {
+        navItems[2].classList.add('active');
+        loadWithdrawalData();
+        setupWithdrawalRealTimeListener();
+      }
+      else if (pageId === 'profilePage') {
+        navItems[3].classList.add('active');
+        loadProfileData();
+      }
+    }
+    
+    async function loadUserData() {
+      if (!currentUser) return;
+      
+      try {
+        const userDoc = await db.collection('users').doc(currentUser.uid).get();
+        if (userDoc.exists) {
+          userData = userDoc.data();
+          userBalance = userData.balance || 0;
+          referralCount = userData.referralCount || 0;
+          failedReferrals = userData.failedReferrals || 0;
+          todayReward = userData.todayReward || 0;
+          userReferralCode = userData.referralCode || '';
+          
+          updateUI();
+        }
+      } catch (error) {
+        console.error('❌ Error loading user data:', error);
+      }
+    }
+    
+    function updateUI() {
+      document.getElementById('userBalance').textContent = formatRupiah(userBalance);
+      document.getElementById('successReferrals').textContent = referralCount;
+      document.getElementById('failedReferrals').textContent = failedReferrals;
+      document.getElementById('todayReward').textContent = formatRupiah(todayReward);
+      document.getElementById('withdrawalBalance').textContent = formatRupiah(userBalance);
+      
+      // Profile page
+      document.getElementById('profileReferralCount').textContent = referralCount;
+      document.getElementById('profileFailedReferrals').textContent = failedReferrals;
+      document.getElementById('profileTotalEarnings').textContent = formatRupiah(referralCount * 350);
+      document.getElementById('profileBalance').textContent = formatRupiah(userBalance);
+    }
+    
+    function setupRealTimeListener() {
+      if (!currentUser) return;
+      
+      if (realTimeListener) {
+        realTimeListener();
+      }
+      
+      realTimeListener = db.collection('users').doc(currentUser.uid)
+        .onSnapshot((doc) => {
+          if (doc.exists) {
+            const newData = doc.data();
+            const oldBalance = userBalance;
+            
+            userBalance = newData.balance || 0;
+            referralCount = newData.referralCount || 0;
+            failedReferrals = newData.failedReferrals || 0;
+            todayReward = newData.todayReward || 0;
+            userReferralCode = newData.referralCode || '';
+            
+            if (userBalance !== oldBalance) {
+              updateUI();
+              showNotification('info', `Saldo berubah: ${formatRupiah(userBalance)}`);
+            }
+          }
+        }, (error) => {
+          console.error('❌ Real-time listener error:', error);
+        });
+    }
+    
+    // ========== REFERRAL FUNCTIONS ==========
+    async function loadReferralData() {
+      if (!currentUser) return;
+      
+      try {
+        const userDoc = await db.collection('users').doc(currentUser.uid).get();
+        if (userDoc.exists) {
+          const data = userDoc.data();
+          
+          document.getElementById('userReferralCode').textContent = data.referralCode || 'GENERATE...';
+          document.getElementById('totalReferralsPage').textContent = data.referralCount || 0;
+          document.getElementById('failedReferralsPage').textContent = data.failedReferrals || 0;
+        }
+      } catch (error) {
+        console.error('❌ Error loading referral data:', error);
+      }
+    }
+    
+    function copyReferralCode() {
+      if (!userReferralCode) {
+        showNotification('error', 'Kode referral belum siap');
+        return;
+      }
+      
+      navigator.clipboard.writeText(userReferralCode).then(() => {
+        const codeElement = document.getElementById('userReferralCode');
+        const originalText = codeElement.textContent;
+        
+        codeElement.textContent = '✅ COPIED!';
+        codeElement.style.color = '#10b981';
+        codeElement.style.borderColor = '#10b981';
+        
+        showNotification('success', 'Kode referral berhasil disalin!');
+        
+        setTimeout(() => {
+          codeElement.textContent = originalText;
+          codeElement.style.color = 'var(--gold)';
+          codeElement.style.borderColor = 'var(--purple)';
+        }, 2000);
+      }).catch(err => {
+        showNotification('error', 'Gagal menyalin kode');
+      });
+    }
+    
+    function shareReferral() {
+      if (!userReferralCode) {
+        showNotification('error', 'Kode referral belum tersedia');
+        return;
+      }
+      
+      const shareLink = `${window.location.origin}${window.location.pathname}?ref=${userReferralCode}`;
+      document.getElementById('shareableLink').textContent = shareLink;
+      document.getElementById('shareModal').style.display = 'flex';
+    }
+    
+    function closeModal() {
+      document.getElementById('shareModal').style.display = 'none';
+    }
+    
+    function copyShareLink() {
+      const link = document.getElementById('shareableLink').textContent;
+      navigator.clipboard.writeText(link).then(() => {
+        showNotification('success', 'Link berhasil dicopy!');
+        closeModal();
+      }).catch(err => {
+        showNotification('error', 'Gagal copy link');
+      });
+    }
+    
+    // ========== WITHDRAWAL FUNCTIONS ==========
+    function selectWallet(walletType) {
+      selectedWallet = walletType;
+      
+      // Hide all forms
+      document.getElementById('danaForm').style.display = 'none';
+      document.getElementById('ovoForm').style.display = 'none';
+      document.getElementById('shopeeForm').style.display = 'none';
+      document.getElementById('bankForm').style.display = 'none';
+      
+      // Remove active class
+      document.querySelectorAll('.wallet-option').forEach(el => {
+        el.classList.remove('active');
+      });
+      
+      // Add active class
+      const walletElement = document.getElementById(`wallet${walletType.charAt(0).toUpperCase() + walletType.slice(1)}`);
+      if (walletElement) {
+        walletElement.classList.add('active');
+      }
+      
+      // Show selected form
+      if (walletType === 'dana') {
+        document.getElementById('danaForm').style.display = 'block';
+      } else if (walletType === 'ovo') {
+        document.getElementById('ovoForm').style.display = 'block';
+      } else if (walletType === 'shopee') {
+        document.getElementById('shopeeForm').style.display = 'block';
+      } else if (walletType === 'bank') {
+        document.getElementById('bankForm').style.display = 'block';
+      }
+    }
+    
+    async function submitWithdrawal() {
+      if (!currentUser) {
+        showError('withdrawalError', 'Silakan login terlebih dahulu');
+        return;
+      }
+      
+      if (!selectedWallet) {
+        showError('withdrawalError', 'Pilih metode penarikan terlebih dahulu');
+        return;
+      }
+      
+      const amountInput = document.getElementById('withdrawalAmount').value.trim();
+      
+      // Validation
+      if (!amountInput) {
+        showError('withdrawalError', 'Masukkan jumlah penarikan');
+        return;
+      }
+      
+      const amount = parseInt(amountInput.replace(/[^\d]/g, ''));
+      
+      if (isNaN(amount) || amount < 10000) {
+        showError('withdrawalError', 'Minimal penarikan Rp10.000');
+        return;
+      }
+      
+      if (amount > userBalance) {
+        showError('withdrawalError', 'Saldo tidak mencukupi');
+        return;
+      }
+      
+      // Get payment details
+      let accountInfo = '';
+      let accountName = '';
+      let methodName = '';
+      
+      if (selectedWallet === 'dana') {
+        const danaNumber = document.getElementById('danaNumber').value.trim();
+        const danaName = document.getElementById('danaName').value.trim();
+        
+        if (!danaNumber || !danaName) {
+          showError('withdrawalError', 'Isi semua data DANA');
+          return;
+        }
+        
+        accountInfo = `DANA: ${danaNumber}`;
+        accountName = danaName;
+        methodName = 'DANA';
+      } 
+      else if (selectedWallet === 'ovo') {
+        const ovoNumber = document.getElementById('ovoNumber').value.trim();
+        const ovoName = document.getElementById('ovoName').value.trim();
+        
+        if (!ovoNumber || !ovoName) {
+          showError('withdrawalError', 'Isi semua data OVO');
+          return;
+        }
+        
+        accountInfo = `OVO: ${ovoNumber}`;
+        accountName = ovoName;
+        methodName = 'OVO';
+      }
+      else if (selectedWallet === 'shopee') {
+        const shopeeNumber = document.getElementById('shopeeNumber').value.trim();
+        const shopeeName = document.getElementById('shopeeName').value.trim();
+        
+        if (!shopeeNumber || !shopeeName) {
+          showError('withdrawalError', 'Isi semua data ShopeePay');
+          return;
+        }
+        
+        accountInfo = `ShopeePay: ${shopeeNumber}`;
+        accountName = shopeeName;
+        methodName = 'SHOPEE PAY';
+      }
+      else if (selectedWallet === 'bank') {
+        const bankName = document.getElementById('bankName').value;
+        const bankNumber = document.getElementById('bankNumber').value.trim();
+        const bankAccountName = document.getElementById('bankAccountName').value.trim();
+        
+        if (!bankName || !bankNumber || !bankAccountName) {
+          showError('withdrawalError', 'Isi semua data bank');
+          return;
+        }
+        
+        accountInfo = `${bankName}: ${bankNumber}`;
+        accountName = bankAccountName;
+        methodName = `BANK ${bankName}`;
+      }
+      
+      // Confirmation
+      if (!confirm(`💰 Konfirmasi Penarikan:\n\n• Jumlah: Rp${amount.toLocaleString('id-ID')}\n• Metode: ${methodName}\n• Tujuan: ${accountInfo}\n• Nama: ${accountName}\n\nYakin mau tarik?`)) {
+        return;
+      }
+      
+      const btn = document.getElementById('withdrawalBtn');
+      const originalHTML = btn.innerHTML;
+      btn.innerHTML = '<span class="loading"></span> Processing...';
+      btn.disabled = true;
+      
+      try {
+        // Generate unique withdrawal ID
+        const withdrawalId = 'WD' + Date.now() + Math.random().toString(36).substr(2, 9).toUpperCase();
+        
+        // FIXED: Simpan data dengan struktur yang benar
+        const withdrawalData = {
+          withdrawalId: withdrawalId,
+          userId: currentUser.uid,
+          userEmail: currentUser.email,
+          amount: amount,
+          method: methodName,
+          accountInfo: accountInfo,
+          accountName: accountName,
+          status: 'pending', // Status awal: PENDING
+          adminNote: '',
+          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+          processedAt: null, // Akan diisi saat admin approve
+          userAvatar: currentUser.email.charAt(0).toUpperCase()
+        };
+        
+        // FIXED: Simpan ke collection withdrawals
+        await db.collection('withdrawals').doc(withdrawalId).set(withdrawalData);
+        
+        // Juga simpan ke subcollection user
+        await db.collection('users').doc(currentUser.uid)
+          .collection('withdrawals').doc(withdrawalId).set({
+            ...withdrawalData,
+            isActive: true
+          });
+        
+        // FIXED: Kurangi saldo sekarang (tidak perlu tunggu admin)
+        await db.collection('users').doc(currentUser.uid).update({
+          balance: firebase.firestore.FieldValue.increment(-amount),
+          totalWithdraw: firebase.firestore.FieldValue.increment(amount)
+        });
+        
+        userBalance -= amount;
+        
+        // Clear form
+        document.getElementById('withdrawalAmount').value = '';
+        
+        if (selectedWallet === 'dana') {
+          document.getElementById('danaNumber').value = '';
+          document.getElementById('danaName').value = '';
+        } else if (selectedWallet === 'ovo') {
+          document.getElementById('ovoNumber').value = '';
+          document.getElementById('ovoName').value = '';
+        } else if (selectedWallet === 'shopee') {
+          document.getElementById('shopeeNumber').value = '';
+          document.getElementById('shopeeName').value = '';
+        } else if (selectedWallet === 'bank') {
+          document.getElementById('bankName').value = '';
+          document.getElementById('bankNumber').value = '';
+          document.getElementById('bankAccountName').value = '';
+        }
+        
+        selectedWallet = null;
+        document.querySelectorAll('.wallet-option').forEach(el => {
+          el.classList.remove('active');
+        });
+        
+        document.getElementById('danaForm').style.display = 'none';
+        document.getElementById('ovoForm').style.display = 'none';
+        document.getElementById('shopeeForm').style.display = 'none';
+        document.getElementById('bankForm').style.display = 'none';
+        
+        // Update UI
+        updateUI();
+        
+        // Show success message
+        showSuccess('withdrawalSuccess', `
+          <div style="text-align: left;">
+            <div style="font-weight: bold; margin-bottom: 10px; color: #10b981;">
+              ✅ PENARIKAN BERHASIL DIAJUKAN!
+            </div>
+            <div style="font-size: 13px; line-height: 1.5;">
+              <div><strong>ID:</strong> ${withdrawalId}</div>
+              <div><strong>Jumlah:</strong> Rp${amount.toLocaleString('id-ID')}</div>
+              <div><strong>Status:</strong> <span class="status-pending" style="padding: 4px 10px; border-radius: 12px; font-size: 11px;">PENDING</span></div>
+              <div style="margin-top: 10px; color: var(--warning);">
+                <i class="fas fa-clock"></i> Diproses 1x24 jam
+              </div>
+            </div>
+          </div>
+        `);
+        
+        // Refresh history
+        setTimeout(() => {
+          loadWithdrawalData();
+          setupWithdrawalRealTimeListener();
+        }, 1000);
+        
+        showNotification('success', 
+          `Penarikan Rp${amount.toLocaleString('id-ID')} berhasil diajukan!`
+        );
+        
+        console.log('✅ Withdrawal submitted:', withdrawalId);
+        
+      } catch (error) {
+        console.error('❌ Withdrawal error:', error);
+        showError('withdrawalError', 'Gagal mengajukan penarikan: ' + error.message);
+      } finally {
+        btn.innerHTML = originalHTML;
+        btn.disabled = false;
+      }
+    }
+    
+    function setupWithdrawalRealTimeListener() {
+      if (!currentUser) return;
+      
+      // Stop old listener
+      if (withdrawalListener) {
+        withdrawalListener();
+      }
+      
+      console.log('👂 Setting up withdrawal listener...');
+      
+      // FIXED: Listen to withdrawals collection
+      withdrawalListener = db.collection('withdrawals')
+        .where('userId', '==', currentUser.uid)
+        .orderBy('timestamp', 'desc')
+        .onSnapshot((snapshot) => {
+          console.log('📊 Withdrawal data updated:', snapshot.size, 'records');
+          updateWithdrawalHistoryUI(snapshot);
+        }, (error) => {
+          console.error('❌ Withdrawal listener error:', error);
+        });
+    }
+    
+    function updateWithdrawalHistoryUI(snapshot) {
+      const historyContainer = document.getElementById('withdrawalHistory');
+      
+      if (snapshot.empty) {
+        historyContainer.innerHTML = `
+          <div style="text-align: center; color: rgba(255,255,255,0.5); padding: 40px;">
+            <i class="fas fa-receipt fa-3x" style="margin-bottom: 15px;"></i><br>
+            Belum ada riwayat penarikan
+          </div>
+        `;
+        return;
+      }
+      
+      let html = '';
+      snapshot.forEach(doc => {
+        const wdData = doc.data();
+        console.log('📝 Processing withdrawal:', wdData.withdrawalId, wdData.status);
+        
+        // Format date
+        let date = new Date();
+        let formattedDate = 'Today';
+        let formattedTime = '';
+        
+        if (wdData.timestamp && wdData.timestamp.toDate) {
+          date = wdData.timestamp.toDate();
+          formattedDate = date.toLocaleDateString('id-ID', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric'
+          });
+          formattedTime = date.toLocaleTimeString('id-ID', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+          });
+        }
+        
+        // FIXED: Status mapping
+        let statusClass = 'status-pending';
+        let statusText = 'PENDING';
+        let statusType = 'pending';
+        let statusIcon = '⏳';
+        
+        const status = wdData.status ? wdData.status.toLowerCase() : 'pending';
+        
+        if (status === 'approved' || status === 'success') {
+          statusClass = 'status-approved';
+          statusText = 'SUKSES';
+          statusType = 'success';
+          statusIcon = '✅';
+        } else if (status === 'rejected' || status === 'failed') {
+          statusClass = 'status-rejected';
+          statusText = 'DITOLAK';
+          statusType = 'rejected';
+          statusIcon = '❌';
+        } else if (status === 'processing') {
+          statusClass = 'status-processing';
+          statusText = 'PROSES';
+          statusType = 'processing';
+          statusIcon = '🔄';
+        }
+        
+        // Format amount
+        const amount = wdData.amount || 0;
+        const formattedAmount = 'Rp' + amount.toLocaleString('id-ID');
+        
+        html += `
+          <div class="history-item ${statusType}" style="
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            animation: slideInUp 0.3s ease;
+          ">
+            <div class="history-header" style="
+              display: flex;
+              justify-content: space-between;
+              align-items: flex-start;
+              margin-bottom: 12px;
+            ">
+              <div>
+                <strong style="color: white; font-size: 15px;">${wdData.method || 'Unknown'}</strong>
+                <div style="font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 4px;">
+                  ${formattedDate} ⏰ ${formattedTime}
+                </div>
+              </div>
+              <div class="history-amount" style="
+                font-weight: 900;
+                color: var(--gold);
+                font-size: 20px;
+                text-shadow: 0 2px 10px rgba(255, 211, 42, 0.3);
+              ">
+                ${formattedAmount}
+              </div>
+            </div>
+            
+            <div style="
+              font-size: 13px;
+              color: rgba(255, 255, 255, 0.7);
+              margin-bottom: 12px;
+            ">
+              <div style="margin-bottom: 6px;">
+                <strong>Tujuan:</strong> ${wdData.accountInfo || ''}
+              </div>
+              <div>
+                <strong>Nama:</strong> ${wdData.accountName || ''}
+              </div>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <span class="${statusClass}" style="
+                  padding: 6px 14px;
+                  border-radius: 20px;
+                  font-size: 12px;
+                  font-weight: 700;
+                  display: inline-flex;
+                  align-items: center;
+                  gap: 6px;
+                ">
+                  ${statusIcon} ${statusText}
+                </span>
+              </div>
+              <div style="font-size: 11px; color: rgba(255,255,255,0.5);">
+                ID: ${wdData.withdrawalId || ''}
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      
+      historyContainer.innerHTML = html;
+    }
+    
+    async function loadWithdrawalData() {
+      if (!currentUser) return;
+      
+      try {
+        const snapshot = await db.collection('withdrawals')
+          .where('userId', '==', currentUser.uid)
+          .orderBy('timestamp', 'desc')
+          .limit(20)
+          .get();
+        
+        updateWithdrawalHistoryUI(snapshot);
+        
+      } catch (error) {
+        console.error('❌ Error loading withdrawal data:', error);
+        const historyContainer = document.getElementById('withdrawalHistory');
+        historyContainer.innerHTML = `
+          <div style="text-align: center; color: var(--danger); padding: 40px;">
+            <i class="fas fa-exclamation-triangle fa-3x"></i><br>
+            Error loading data
+          </div>
+        `;
+      }
+    }
+    
+    // ========== PROFILE FUNCTIONS ==========
+    async function loadProfileData() {
+      if (!currentUser) return;
+      
+      try {
+        const userDoc = await db.collection('users').doc(currentUser.uid).get();
+        
+        if (userDoc.exists) {
+          const data = userDoc.data();
+          
+          document.getElementById('profileEmail').textContent = currentUser.email;
+          document.getElementById('profileUserId').textContent = currentUser.uid;
+          document.getElementById('profileRole').textContent = data.role || 'user';
+        }
+      } catch (error) {
+        console.error('❌ Error loading profile data:', error);
+      }
+    }
+    
+    function copyToClipboard(elementId) {
+      const text = document.getElementById(elementId).textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        showNotification('success', 'User ID berhasil disalin!');
+      }).catch(err => {
+        showNotification('error', 'Gagal menyalin');
+      });
+    }
+    
+    function confirmLogout() {
+      if (confirm('Yakin ingin logout dari akun ini?')) {
+        logout();
+      }
+    }
+    
+    async function logout() {
+      try {
+        // Stop all listeners
+        if (realTimeListener) {
+          realTimeListener();
+          realTimeListener = null;
+        }
+        
+        if (withdrawalListener) {
+          withdrawalListener();
+          withdrawalListener = null;
+        }
+        
+        await auth.signOut();
+        
+        currentUser = null;
+        userData = {};
+        
+        // Animate logout
+        document.getElementById('appContainer').style.animation = 'slideInUp 0.4s ease reverse';
+        setTimeout(() => {
+          window.location.reload();
+        }, 400);
+        
+      } catch (error) {
+        console.error('❌ Error logging out:', error);
+        showNotification('error', 'Gagal logout');
+      }
+    }
+    
+    // ========== URL REFERRAL CHECK ==========
+    function checkUrlForReferral() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const refCode = urlParams.get('ref');
+      
+      if (refCode && currentUser) {
+        processUrlReferral(refCode);
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+    }
+    
+    async function processUrlReferral(refCode) {
+      if (!currentUser || !refCode) return;
+      
+      try {
+        const userDoc = await db.collection('users').doc(currentUser.uid).get();
+        if (userDoc.exists) {
+          const data = userDoc.data();
+          
+          if (!data.hasUsedReferral) {
+            const success = await processReferral(refCode.toUpperCase(), currentUser.uid);
+            
+            if (success) {
+              await db.collection('users').doc(currentUser.uid).update({
+                hasUsedReferral: true
+              });
+              
+              showNotification('success', 'Bonus referral berhasil diberikan! 🎉');
+            }
+          }
+        }
+      } catch (error) {
+        console.error('❌ Error processing URL referral:', error);
+      }
+    }
+    
+    // ========== ADMIN FUNCTIONS (HIDDEN) ==========
+    async function approveWithdrawal(withdrawalId) {
+      if (!confirm('Approve withdrawal ini?')) return;
+      
+      try {
+        await db.collection('withdrawals').doc(withdrawalId).update({
+          status: 'approved',
+          processedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          adminNote: 'Approved by admin'
+        });
+        
+        showNotification('success', 'Withdrawal approved!');
+        
+      } catch (error) {
+        console.error('❌ Error approving withdrawal:', error);
+        showNotification('error', 'Gagal approve');
+      }
+    }
+    
+    // ========== INITIALIZE ==========
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        currentUser = user;
+        
+        try {
+          const userDoc = await db.collection('users').doc(user.uid).get();
+          if (userDoc.exists) {
+            userData = userDoc.data();
+            showApp();
+          } else {
+            const newReferralCode = generateReferralCode();
+            
+            await db.collection('users').doc(user.uid).set({
+              email: user.email,
+              role: 'user',
+              referralCode: newReferralCode,
+              balance: 0,
+              referralCount: 0,
+              failedReferrals: 0,
+              todayReward: 0,
+              totalWithdraw: 0,
+              hasUsedReferral: false,
+              status: 'active',
+              createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+              lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            
+            userData = { 
+              email: user.email, 
+              role: 'user',
+              referralCode: newReferralCode,
+              balance: 0,
+              referralCount: 0
+            };
+            showApp();
+          }
+        } catch (error) {
+          console.error('❌ Error in auth state change:', error);
+        }
+      }
+    });
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('🚀 Referral App Loaded with Animations!');
+      
+      // Add loading animation to cards
+      const cards = document.querySelectorAll('.glossy-card');
+      cards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+      });
+    });
+  </script>
+</body>
+</html>
