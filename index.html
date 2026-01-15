@@ -1,0 +1,1751 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FREELANCE GACOR PRO</title>
+      <!-- FIREBASE -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  
+    <!-- Font Awesome 7.0.1 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ========== CYLEX RESET ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #fff;
+            padding-bottom: 80px; /* Space for bottom nav */
+        }
+
+        /* ========== GLOSSY iOS STYLES ========== */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(25px) saturate(180%);
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.15),
+                0 8px 32px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.4), 
+                transparent);
+        }
+
+        .glass-btn {
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.25), 
+                rgba(255, 255, 255, 0.1));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            color: white;
+            font-weight: 600;
+            padding: 14px 24px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 
+                0 8px 24px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .glass-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 12px 32px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.3), 
+                rgba(255, 255, 255, 0.15));
+        }
+
+        .glass-btn:active {
+            transform: translateY(0);
+        }
+
+        /* ========== BOTTOM NAVIGATION BAR ========== */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 16px;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            min-width: 70px;
+        }
+
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            top: -12px;
+            width: 30px;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 3px;
+            animation: navActive 0.3s ease;
+        }
+
+        @keyframes navActive {
+            from { transform: scaleX(0); }
+            to { transform: scaleX(1); }
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+            transition: all 0.3s;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+
+        .nav-item.active .nav-icon {
+            transform: translateY(-3px);
+            color: #fff;
+            filter: drop-shadow(0 4px 8px rgba(102, 126, 234, 0.4));
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 600;
+            opacity: 0.8;
+            transition: all 0.3s;
+        }
+
+        .nav-item.active .nav-label {
+            opacity: 1;
+            font-weight: 700;
+        }
+
+        /* ========== MAIN CONTAINER ========== */
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ========== AUTH SCREENS ========== */
+        .auth-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 400px;
+            padding: 40px 30px;
+            animation: cardPop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes cardPop {
+            0% { opacity: 0; transform: scale(0.8); }
+            70% { transform: scale(1.02); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .auth-logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .auth-logo i {
+            font-size: 60px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 8px 16px rgba(102, 126, 234, 0.3));
+        }
+
+        .auth-title {
+            font-size: 28px;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #fff, rgba(255,255,255,0.9));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .auth-subtitle {
+            text-align: center;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        /* ========== INPUT STYLES ========== */
+        .input-group {
+            margin-bottom: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: rgba(255,255,255,0.9);
+            padding-left: 5px;
+        }
+
+        .glass-input {
+            width: 100%;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            color: white;
+            font-size: 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-input:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 
+                0 0 0 4px rgba(102, 126, 234, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .glass-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* ========== NOTIFICATION SYSTEM ========== */
+        .notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 400px;
+            pointer-events: none;
+        }
+
+        .notification {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 18px;
+            padding: 20px;
+            margin-bottom: 15px;
+            animation: slideInRight 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            pointer-events: auto;
+            border-left: 4px solid;
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(100px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .notification.success { border-left-color: #10b981; }
+        .notification.error { border-left-color: #ef4444; }
+        .notification.info { border-left-color: #3b82f6; }
+
+        .notification-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .notification.success .notification-icon {
+            background: linear-gradient(135deg, #10b981, #34d399);
+        }
+
+        .notification.error .notification-icon {
+            background: linear-gradient(135deg, #ef4444, #f87171);
+        }
+
+        .notification.info .notification-icon {
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
+        }
+
+        /* ========== HOME PAGE STYLES ========== */
+        .welcome-section {
+            padding: 25px 0;
+            text-align: center;
+        }
+
+        .welcome-text {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 5px;
+            background: linear-gradient(135deg, #fff, rgba(255,255,255,0.8));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .welcome-subtext {
+            color: rgba(255,255,255,0.7);
+            font-size: 14px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .stat-card {
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.25),
+                0 8px 32px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-amount {
+            font-size: 32px;
+            font-weight: 900;
+            margin: 10px 0;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        .broadcast-section {
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .broadcast-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .broadcast-content {
+            color: rgba(255,255,255,0.8);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* ========== REFERRAL PAGE STYLES ========== */
+        .referral-section {
+            padding: 25px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .referral-code {
+            font-family: 'Courier New', monospace;
+            font-size: 32px;
+            font-weight: 900;
+            letter-spacing: 3px;
+            background: rgba(0,0,0,0.2);
+            padding: 20px;
+            border-radius: 16px;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px dashed rgba(255,255,255,0.3);
+        }
+
+        .referral-code:hover {
+            background: rgba(255,255,255,0.1);
+            transform: scale(1.02);
+        }
+
+        .referral-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .referral-rate {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(245, 158, 11, 0.1));
+            padding: 20px;
+            border-radius: 16px;
+            margin: 20px 0;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        /* ========== WITHDRAW PAGE STYLES ========== */
+        .withdraw-section {
+            padding: 25px;
+        }
+
+        .wallet-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .wallet-option {
+            padding: 15px 5px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 12px;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .wallet-option.active {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .wallet-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        /* ========== HISTORY PAGE STYLES ========== */
+        .history-section {
+            padding: 25px;
+        }
+
+        .history-item {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid;
+            transition: all 0.3s;
+        }
+
+        .history-item:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateX(5px);
+        }
+
+        .history-item.pending { border-left-color: #f59e0b; }
+        .history-item.success { border-left-color: #10b981; }
+        .history-item.failed { border-left-color: #ef4444; }
+
+        /* ========== PROFILE PAGE STYLES ========== */
+        .profile-section {
+            padding: 25px;
+        }
+
+        .profile-info {
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .profile-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .profile-label {
+            color: rgba(255,255,255,0.7);
+            font-size: 14px;
+        }
+
+        .profile-value {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* ========== LOADING ANIMATION ========== */
+        .loader {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ========== SWITCH BETWEEN PAGES ========== */
+        .page {
+            display: none;
+            animation: pageTransition 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes pageTransition {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .stats-grid,
+            .referral-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .wallet-options {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .notification-container {
+                left: 15px;
+                right: 15px;
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- NOTIFICATION CONTAINER -->
+    <div class="notification-container" id="notificationContainer"></div>
+
+    <!-- AUTH SCREENS -->
+    <div id="authScreens">
+        <!-- LOGIN SCREEN -->
+        <div class="auth-screen" id="loginScreen">
+            <div class="auth-card glass-card">
+                <div class="auth-logo">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <h1 class="auth-title">FREELANCE GACOR</h1>
+                <p class="auth-subtitle">Login untuk mulai menghasilkan</p>
+                
+                <div class="input-group">
+                    <label class="input-label">Email</label>
+                    <input type="email" id="loginEmail" class="glass-input" placeholder="email@example.com">
+                </div>
+                
+                <div class="input-group">
+                    <label class="input-label">Password</label>
+                    <input type="password" id="loginPassword" class="glass-input" placeholder="••••••••">
+                </div>
+                
+                <div class="input-group">
+                    <label class="input-label">Kode Referral (Opsional)</label>
+                    <input type="text" id="loginReferral" class="glass-input" placeholder="Kode teman">
+                </div>
+                
+                <button class="glass-btn" style="width: 100%;" onclick="login()" id="loginBtn">
+                    <span id="loginText">LOGIN</span>
+                </button>
+                
+                <div style="text-align: center; margin-top: 20px; color: rgba(255,255,255,0.7);">
+                    Belum punya akun? 
+                    <span onclick="showRegister()" style="color: #fff; cursor: pointer; font-weight: 600;">
+                        Daftar disini
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- REGISTER SCREEN -->
+        <div class="auth-screen" id="registerScreen" style="display: none;">
+            <div class="auth-card glass-card">
+                <div class="auth-logo">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                <h1 class="auth-title">BUAT AKUN BARU</h1>
+                <p class="auth-subtitle">Daftar dan dapatkan bonus Rp100</p>
+                
+                <div class="input-group">
+                    <label class="input-label">Email</label>
+                    <input type="email" id="registerEmail" class="glass-input" placeholder="email@example.com">
+                </div>
+                
+                <div class="input-group">
+                    <label class="input-label">Password (min 6 karakter)</label>
+                    <input type="password" id="registerPassword" class="glass-input" placeholder="••••••••">
+                </div>
+                
+                <div class="input-group">
+                    <label class="input-label">Konfirmasi Password</label>
+                    <input type="password" id="registerConfirm" class="glass-input" placeholder="••••••••">
+                </div>
+                
+                <div class="input-group">
+                    <label class="input-label">Kode Referral (Opsional)</label>
+                    <input type="text" id="registerReferral" class="glass-input" placeholder="Dapat bonus tambahan">
+                </div>
+                
+                <button class="glass-btn" style="width: 100%;" onclick="register()" id="registerBtn">
+                    <span id="registerText">DAFTAR SEKARANG</span>
+                </button>
+                
+                <div style="text-align: center; margin-top: 20px; color: rgba(255,255,255,0.7);">
+                    Sudah punya akun? 
+                    <span onclick="showLogin()" style="color: #fff; cursor: pointer; font-weight: 600;">
+                        Login disini
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP -->
+    <div id="mainApp" style="display: none;">
+        <div class="container">
+            <!-- HOME PAGE -->
+            <div id="homePage" class="page active">
+                <div class="welcome-section">
+                    <h1 id="welcomeText" class="welcome-text">Loading...</h1>
+                    <p class="welcome-subtext">Selamat bekerja!</p>
+                </div>
+                
+                <div class="glass-card stat-card" style="text-align: center;">
+                    <div class="stat-label">SALDO ANDA</div>
+                    <div class="stat-amount" id="balanceAmount">Rp0</div>
+                    <div class="stat-label" style="opacity: 0.6;">Tarik kapan saja</div>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="glass-card stat-card">
+                        <div class="stat-label">REFERRAL SUKSES</div>
+                        <div class="stat-amount" id="successReferrals">0</div>
+                        <div class="stat-label" style="opacity: 0.6; font-size: 11px;">Orang bergabung</div>
+                    </div>
+                    
+                    <div class="glass-card stat-card">
+                        <div class="stat-label">REFERRAL GAGAL</div>
+                        <div class="stat-amount" id="failedReferrals">0</div>
+                        <div class="stat-label" style="opacity: 0.6; font-size: 11px;">Tidak aktif</div>
+                    </div>
+                    
+                    <div class="glass-card stat-card">
+                        <div class="stat-label">REWARD HARI INI</div>
+                        <div class="stat-amount" id="todayReward">Rp0</div>
+                        <div class="stat-label" style="opacity: 0.6; font-size: 11px;">Penghasilan harian</div>
+                    </div>
+                    
+                    <div class="glass-card stat-card">
+                        <div class="stat-label">TOTAL PENARIKAN</div>
+                        <div class="stat-amount" id="totalWithdraw">Rp0</div>
+                        <div class="stat-label" style="opacity: 0.6; font-size: 11px;">Berhasil ditarik</div>
+                    </div>
+                </div>
+                
+                <div class="glass-card broadcast-section">
+                    <div class="broadcast-title">
+                        <i class="fas fa-bullhorn" style="color: #fbbf24;"></i>
+                        PANDUAN FREELANCE
+                    </div>
+                    <div class="broadcast-content">
+                        <p>🔥 <strong>Tips Gacor:</strong></p>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li>Bagikan link referral untuk dapat Rp350 per orang</li>
+                            <li>Teman yang daftar dapat Rp150 bonus</li>
+                            <li>Minimal penarikan Rp10.000 via DANA/OVO/ShopeePay</li>
+                            <li>Proses penarikan 1x24 jam kerja</li>
+                            <li>Update aplikasi setiap hari untuk reward harian</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- REFERRAL PAGE -->
+            <div id="referralPage" class="page">
+                <div class="glass-card referral-section">
+                    <div class="broadcast-title">
+                        <i class="fas fa-users" style="color: #8b5cf6;"></i>
+                        SISTEM REFERRAL
+                    </div>
+                    
+                    <div class="referral-code" id="referralCodeDisplay" onclick="copyReferralCode()">
+                        LOADING...
+                    </div>
+                    <div style="color: rgba(255,255,255,0.7); font-size: 13px; margin-bottom: 25px;">
+                        Klik untuk copy • Bagikan ke teman
+                    </div>
+                    
+                    <button class="glass-btn" style="width: 100%; margin-bottom: 25px;" onclick="shareReferral()">
+                        <i class="fas fa-share-alt"></i> BAGIKAN REFERRAL
+                    </button>
+                    
+                    <div class="referral-stats">
+                        <div class="glass-card stat-card">
+                            <div class="stat-label">REFERRAL SUKSES</div>
+                            <div class="stat-amount" id="referralSuccessCount">0</div>
+                        </div>
+                        
+                        <div class="glass-card stat-card">
+                            <div class="stat-label">REFERRAL GAGAL</div>
+                            <div class="stat-amount" id="referralFailedCount">0</div>
+                        </div>
+                    </div>
+                    
+                    <div class="referral-rate">
+                        <div style="color: #fbbf24; font-weight: 700; font-size: 18px;">
+                            <i class="fas fa-money-bill-wave"></i> RATE REFERRAL
+                        </div>
+                        <div style="margin-top: 15px;">
+                            <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <span>Anda dapat</span>
+                                <span style="color: #10b981; font-weight: 700;">Rp350 / orang</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 8px 0;">
+                                <span>Teman dapat</span>
+                                <span style="color: #3b82f6; font-weight: 700;">Rp150 / orang</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="broadcast-content" style="margin-top: 25px; text-align: left;">
+                        <p><strong>💡 Cara Maksimal:</strong></p>
+                        <p>1. Share ke WhatsApp/Telegram group</p>
+                        <p>2. Post di media sosial dengan hastag #freelancegacor</p>
+                        <p>3. Ajakin teman langsung via chat pribadi</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WITHDRAW PAGE -->
+            <div id="withdrawPage" class="page">
+                <div class="glass-card withdraw-section">
+                    <div style="text-align: center; margin-bottom: 25px;">
+                        <div class="stat-label">SALDO TERSEDIA</div>
+                        <div class="stat-amount" id="withdrawBalance">Rp0</div>
+                    </div>
+                    
+                    <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 12px; padding: 15px; margin: 20px 0; text-align: center;">
+                        <i class="fas fa-exclamation-circle" style="color: #f59e0b;"></i>
+                        <span style="color: #fbbf24; font-weight: 600;">Minimal penarikan: Rp10.000</span>
+                    </div>
+                    
+                    <div class="wallet-options">
+                        <div class="glass-card wallet-option" onclick="selectWallet('dana')" id="walletDana">
+                            <div class="wallet-icon" style="color: #00d1d1;">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <div style="font-weight: 600; font-size: 12px;">DANA</div>
+                        </div>
+                        
+                        <div class="glass-card wallet-option" onclick="selectWallet('ovo')" id="walletOvo">
+                            <div class="wallet-icon" style="color: #4f46e5;">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <div style="font-weight: 600; font-size: 12px;">OVO</div>
+                        </div>
+                        
+                        <div class="glass-card wallet-option" onclick="selectWallet('shopee')" id="walletShopee">
+                            <div class="wallet-icon" style="color: #ff5722;">
+                                <i class="fas fa-shopping-bag"></i>
+                            </div>
+                            <div style="font-weight: 600; font-size: 12px;">SHOPEEPAY</div>
+                        </div>
+                        
+                        <div class="glass-card wallet-option" onclick="selectWallet('gopay')" id="walletGopay">
+                            <div class="wallet-icon" style="color: #00aa13;">
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                            <div style="font-weight: 600; font-size: 12px;">GOPAY</div>
+                        </div>
+                        
+                        <div class="glass-card wallet-option" onclick="selectWallet('bank')" id="walletBank">
+                            <div class="wallet-icon" style="color: #fbbf24;">
+                                <i class="fas fa-university"></i>
+                            </div>
+                            <div style="font-weight: 600; font-size: 12px;">BANK</div>
+                        </div>
+                    </div>
+                    
+                    <div id="walletForms" style="display: none;">
+                        <div class="input-group">
+                            <label class="input-label">Nomor E-Wallet</label>
+                            <input type="text" id="walletNumber" class="glass-input" placeholder="0812xxxxxxx">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label class="input-label">Nama Pemilik</label>
+                            <input type="text" id="walletName" class="glass-input" placeholder="Nama sesuai e-wallet">
+                        </div>
+                    </div>
+                    
+                    <div id="bankForm" style="display: none;">
+                        <div class="input-group">
+                            <label class="input-label">Nama Bank</label>
+                            <select id="bankName" class="glass-input">
+                                <option value="">Pilih Bank</option>
+                                <option value="BCA">BCA</option>
+                                <option value="BRI">BRI</option>
+                                <option value="BNI">BNI</option>
+                                <option value="Mandiri">Mandiri</option>
+                                <option value="CIMB">CIMB Niaga</option>
+                                <option value="BSI">BSI</option>
+                            </select>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label class="input-label">Nomor Rekening</label>
+                            <input type="text" id="bankNumber" class="glass-input" placeholder="1234567890">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label class="input-label">Nama Pemilik Rekening</label>
+                            <input type="text" id="bankAccountName" class="glass-input" placeholder="Nama sesuai rekening">
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label class="input-label">Jumlah Penarikan (Rp)</label>
+                        <input type="number" id="withdrawAmount" class="glass-input" placeholder="Minimal 10000">
+                    </div>
+                    
+                    <button class="glass-btn" style="width: 100%; background: linear-gradient(135deg, #10b981, #34d399);" onclick="submitWithdrawal()" id="withdrawBtn">
+                        <i class="fas fa-paper-plane"></i> WITHDRAW SEKARANG
+                    </button>
+                </div>
+            </div>
+
+            <!-- HISTORY PAGE -->
+            <div id="historyPage" class="page">
+                <div class="glass-card history-section">
+                    <div class="broadcast-title">
+                        <i class="fas fa-history" style="color: #3b82f6;"></i>
+                        RIWAYAT PENARIKAN
+                    </div>
+                    
+                    <div id="withdrawHistory">
+                        <div style="text-align: center; padding: 40px 20px; color: rgba(255,255,255,0.5);">
+                            <i class="fas fa-receipt fa-2x" style="margin-bottom: 15px;"></i>
+                            <p>Belum ada riwayat penarikan</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PROFILE PAGE -->
+            <div id="profilePage" class="page">
+                <div class="glass-card profile-section">
+                    <div class="profile-info">
+                        <div style="text-align: center; margin-bottom: 25px;">
+                            <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 32px;">
+                                <i class="fas fa-user"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="profile-row">
+                            <span class="profile-label">Email</span>
+                            <span class="profile-value" id="profileEmail">-</span>
+                        </div>
+                        
+                        <div class="profile-row">
+                            <span class="profile-label">User ID</span>
+                            <span class="profile-value" id="profileUserId" style="font-size: 11px; color: #8b5cf6;">-</span>
+                        </div>
+                        
+                        <div class="profile-row">
+                            <span class="profile-label">Status</span>
+                            <span class="profile-value" id="profileStatus" style="color: #10b981;">Active</span>
+                        </div>
+                        
+                        <div class="profile-row">
+                            <span class="profile-label">Member Sejak</span>
+                            <span class="profile-value" id="profileJoinDate">-</span>
+                        </div>
+                    </div>
+                    
+                    <button class="glass-btn" style="width: 100%; margin-bottom: 15px;" onclick="showChangePassword()">
+                        <i class="fas fa-key"></i> GANTI PASSWORD
+                    </button>
+                    
+                    <button class="glass-btn" style="width: 100%; background: linear-gradient(135deg, #ef4444, #dc2626);" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> LOGOUT
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTTOM NAVIGATION -->
+    <div class="bottom-nav" id="bottomNav" style="display: none;">
+        <div class="nav-item active" onclick="showPage('home')">
+            <i class="fas fa-home nav-icon"></i>
+            <span class="nav-label">Home</span>
+        </div>
+        
+        <div class="nav-item" onclick="showPage('referral')">
+            <i class="fas fa-users nav-icon"></i>
+            <span class="nav-label">Referral</span>
+        </div>
+        
+        <div class="nav-item" onclick="showPage('withdraw')">
+            <i class="fas fa-wallet nav-icon"></i>
+            <span class="nav-label">Withdraw</span>
+        </div>
+        
+        <div class="nav-item" onclick="showPage('history')">
+            <i class="fas fa-history nav-icon"></i>
+            <span class="nav-label">Riwayat</span>
+        </div>
+        
+        <div class="nav-item" onclick="showPage('profile')">
+            <i class="fas fa-user nav-icon"></i>
+            <span class="nav-label">Profile</span>
+        </div>
+    </div>
+
+    <!-- CHANGE PASSWORD MODAL -->
+    <div id="changePasswordModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 9999; align-items: center; justify-content: center; padding: 20px;">
+        <div class="glass-card" style="max-width: 400px; width: 100%; padding: 30px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                <h2 style="font-size: 22px; font-weight: 700;">
+                    <i class="fas fa-key"></i> Ganti Password
+                </h2>
+                <div onclick="closeChangePassword()" style="cursor: pointer; padding: 8px; border-radius: 10px; background: rgba(255,255,255,0.1);">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label class="input-label">Password Lama</label>
+                <input type="password" id="oldPassword" class="glass-input" placeholder="••••••••">
+            </div>
+            
+            <div class="input-group">
+                <label class="input-label">Password Baru</label>
+                <input type="password" id="newPassword" class="glass-input" placeholder="••••••••">
+            </div>
+            
+            <div class="input-group">
+                <label class="input-label">Konfirmasi Password Baru</label>
+                <input type="password" id="confirmNewPassword" class="glass-input" placeholder="••••••••">
+            </div>
+            
+            <button class="glass-btn" style="width: 100%; margin-top: 10px;" onclick="changePassword()" id="changePasswordBtn">
+                <span id="changePasswordText">GANTI PASSWORD</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- FIREBASE & APP SCRIPT -->
+    <script>
+        // ========== FIREBASE CONFIG ==========
+        const firebaseConfig = {
+            apiKey: "AIzaSyBSkDenBMt4s0Dqg1mJNlkCa7uj_TaKr5w",
+            authDomain: "freelance234.firebaseapp.com",
+            projectId: "freelance234",
+            storageBucket: "freelance234.firebasestorage.app",
+            messagingSenderId: "19649400005",
+            appId: "1:19649400005:web:59b65bde4986a4940b34ac"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // ========== GLOBAL VARIABLES ==========
+        let currentUser = null;
+        let userData = {};
+        let userBalance = 0;
+        let referralCode = '';
+        let selectedWallet = null;
+
+        // ========== NOTIFICATION SYSTEM ==========
+        function showNotification(type, title, message, duration = 5000) {
+            const container = document.getElementById('notificationContainer');
+            const notificationId = 'notif_' + Date.now();
+            
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.id = notificationId;
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center;">
+                    <div class="notification-icon">
+                        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'times-circle' : 'info-circle'}"></i>
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 700; font-size: 16px; margin-bottom: 5px;">${title}</div>
+                        <div style="font-size: 14px; opacity: 0.9;">${message}</div>
+                    </div>
+                    <div onclick="document.getElementById('${notificationId}').remove()" 
+                         style="cursor: pointer; padding: 5px; border-radius: 8px; margin-left: 10px; background: rgba(255,255,255,0.1);">
+                        <i class="fas fa-times"></i>
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(notification);
+            
+            setTimeout(() => {
+                const notif = document.getElementById(notificationId);
+                if (notif) {
+                    notif.style.opacity = '0';
+                    notif.style.transform = 'translateX(100px)';
+                    setTimeout(() => notif.remove(), 300);
+                }
+            }, duration);
+        }
+
+        // ========== AUTH FUNCTIONS ==========
+        function showRegister() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('registerScreen').style.display = 'flex';
+        }
+
+        function showLogin() {
+            document.getElementById('registerScreen').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'flex';
+        }
+
+        async function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const referral = document.getElementById('loginReferral').value;
+            const btn = document.getElementById('loginBtn');
+            const btnText = document.getElementById('loginText');
+            
+            if (!email || !password) {
+                showNotification('error', 'Error!', 'Email dan password harus diisi');
+                return;
+            }
+            
+            btn.disabled = true;
+            btnText.innerHTML = '<div class="loader"></div>';
+            
+            try {
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                currentUser = userCredential.user;
+                
+                const userDoc = await db.collection('users').doc(currentUser.uid).get();
+                
+                if (userDoc.exists) {
+                    userData = userDoc.data();
+                    
+                    if (userData.role === 'admin') {
+                        showNotification('success', 'Admin Login', 'Mengarahkan ke dashboard admin...');
+                        setTimeout(() => window.location.href = 'admin.html', 2000);
+                        return;
+                    }
+                    
+                    userBalance = userData.balance || 0;
+                    referralCode = userData.referralCode || generateReferralCode();
+                    
+                    if (referral && referral.trim() !== '') {
+                        await processReferral(referral, currentUser.uid);
+                    }
+                    
+                    showMainApp();
+                    showNotification('success', 'Login Berhasil!', `Selamat datang kembali! Saldo: Rp${userBalance.toLocaleString('id-ID')}`);
+                    
+                } else {
+                    const newReferralCode = generateReferralCode();
+                    let initialBalance = 0;
+                    
+                    if (referral && referral.trim() !== '') {
+                        await processReferral(referral, currentUser.uid);
+                        initialBalance = 100;
+                    }
+                    
+                    await db.collection('users').doc(currentUser.uid).set({
+                        email: email,
+                        referralCode: newReferralCode,
+                        balance: initialBalance,
+                        referralCount: 0,
+                        failedReferrals: 0,
+                        totalWithdraw: 0,
+                        todayReward: 0,
+                        status: 'active',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    userData = {
+                        email: email,
+                        referralCode: newReferralCode,
+                        balance: initialBalance
+                    };
+                    userBalance = initialBalance;
+                    referralCode = newReferralCode;
+                    
+                    showMainApp();
+                    showNotification('success', 'Akun Baru!', `Pendaftaran berhasil! Bonus Rp${initialBalance}`);
+                }
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                let errorMessage = error.message;
+                if (error.code === 'auth/user-not-found') {
+                    errorMessage = 'Email tidak terdaftar';
+                } else if (error.code === 'auth/wrong-password') {
+                    errorMessage = 'Password salah';
+                }
+                showNotification('error', 'Login Gagal!', errorMessage);
+                btnText.textContent = 'LOGIN';
+                btn.disabled = false;
+            }
+        }
+
+        async function register() {
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirm = document.getElementById('registerConfirm').value;
+            const referral = document.getElementById('registerReferral').value;
+            const btn = document.getElementById('registerBtn');
+            const btnText = document.getElementById('registerText');
+            
+            if (!email || !password || !confirm) {
+                showNotification('error', 'Error!', 'Semua field harus diisi');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showNotification('error', 'Error!', 'Password minimal 6 karakter');
+                return;
+            }
+            
+            if (password !== confirm) {
+                showNotification('error', 'Error!', 'Password tidak cocok');
+                return;
+            }
+            
+            btn.disabled = true;
+            btnText.innerHTML = '<div class="loader"></div>';
+            
+            try {
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                currentUser = userCredential.user;
+                
+                const newReferralCode = generateReferralCode();
+                let initialBalance = 0;
+                
+                if (referral && referral.trim() !== '') {
+                    await processReferral(referral, currentUser.uid);
+                    initialBalance = 100;
+                }
+                
+                await db.collection('users').doc(currentUser.uid).set({
+                    email: email,
+                    referralCode: newReferralCode,
+                    balance: initialBalance,
+                    referralCount: 0,
+                    failedReferrals: 0,
+                    totalWithdraw: 0,
+                    todayReward: 0,
+                    status: 'active',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                userData = {
+                    email: email,
+                    referralCode: newReferralCode,
+                    balance: initialBalance
+                };
+                userBalance = initialBalance;
+                referralCode = newReferralCode;
+                
+                showMainApp();
+                showNotification('success', 'Pendaftaran Berhasil!', `Akun dibuat dengan bonus Rp${initialBalance}. Kode referral: ${newReferralCode}`);
+                
+            } catch (error) {
+                console.error('Register error:', error);
+                let errorMessage = error.message;
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMessage = 'Email sudah terdaftar';
+                }
+                showNotification('error', 'Pendaftaran Gagal!', errorMessage);
+                btnText.textContent = 'DAFTAR SEKARANG';
+                btn.disabled = false;
+            }
+        }
+
+        // ========== UTILITY FUNCTIONS ==========
+        function generateReferralCode() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let code = '';
+            for (let i = 0; i < 6; i++) {
+                code += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return code;
+        }
+
+        async function processReferral(refCode, userId) {
+            try {
+                const usersRef = db.collection('users');
+                const querySnapshot = await usersRef.where('referralCode', '==', refCode.toUpperCase()).get();
+                
+                if (querySnapshot.empty) {
+                    return false;
+                }
+                
+                const referrerDoc = querySnapshot.docs[0];
+                const referrerId = referrerDoc.id;
+                
+                if (referrerId === userId) {
+                    return false;
+                }
+                
+                // Referrer dapat Rp350, user baru dapat Rp150
+                await db.collection('users').doc(referrerId).update({
+                    balance: firebase.firestore.FieldValue.increment(350),
+                    referralCount: firebase.firestore.FieldValue.increment(1)
+                });
+                
+                await db.collection('users').doc(userId).update({
+                    balance: firebase.firestore.FieldValue.increment(150),
+                    hasUsedReferral: true
+                });
+                
+                // Log referral
+                await db.collection('referrals').add({
+                    referrerId: referrerId,
+                    referredId: userId,
+                    referrerBonus: 350,
+                    referredBonus: 150,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                return true;
+                
+            } catch (error) {
+                console.error('Referral error:', error);
+                return false;
+            }
+        }
+
+        function formatRupiah(amount) {
+            return 'Rp' + amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        }
+
+        // ========== MAIN APP FUNCTIONS ==========
+        function showMainApp() {
+            document.getElementById('authScreens').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
+            document.getElementById('bottomNav').style.display = 'flex';
+            
+            // Update user info
+            const username = currentUser.email.split('@')[0];
+            document.getElementById('welcomeText').textContent = `Halo, ${username}!`;
+            
+            // Load data
+            updateDashboard();
+            loadProfileData();
+            setupRealtimeListener();
+        }
+
+        function showPage(pageId) {
+            // Hide all pages
+            const pages = ['homePage', 'referralPage', 'withdrawPage', 'historyPage', 'profilePage'];
+            pages.forEach(page => {
+                document.getElementById(page).classList.remove('active');
+            });
+            
+            // Update nav
+            document.querySelectorAll('.nav-item').forEach(nav => {
+                nav.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.getElementById(pageId + 'Page').classList.add('active');
+            
+            // Highlight nav
+            const navIndex = ['home', 'referral', 'withdraw', 'history', 'profile'].indexOf(pageId);
+            document.querySelectorAll('.nav-item')[navIndex].classList.add('active');
+            
+            // Load page specific data
+            if (pageId === 'home') updateDashboard();
+            if (pageId === 'referral') loadReferralData();
+            if (pageId === 'withdraw') loadWithdrawData();
+            if (pageId === 'history') loadWithdrawHistory();
+            if (pageId === 'profile') loadProfileData();
+        }
+
+        async function updateDashboard() {
+            if (!currentUser) return;
+            
+            try {
+                const userDoc = await db.collection('users').doc(currentUser.uid).get();
+                if (userDoc.exists) {
+                    const data = userDoc.data();
+                    userBalance = data.balance || 0;
+                    
+                    // Update dashboard
+                    document.getElementById('balanceAmount').textContent = formatRupiah(userBalance);
+                    document.getElementById('successReferrals').textContent = data.referralCount || 0;
+                    document.getElementById('failedReferrals').textContent = data.failedReferrals || 0;
+                    document.getElementById('todayReward').textContent = formatRupiah(data.todayReward || 0);
+                    document.getElementById('totalWithdraw').textContent = formatRupiah(data.totalWithdraw || 0);
+                    document.getElementById('withdrawBalance').textContent = formatRupiah(userBalance);
+                }
+            } catch (error) {
+                console.error('Dashboard error:', error);
+            }
+        }
+
+        async function loadReferralData() {
+            if (!currentUser) return;
+            
+            try {
+                const userDoc = await db.collection('users').doc(currentUser.uid).get();
+                if (userDoc.exists) {
+                    const data = userDoc.data();
+                    document.getElementById('referralCodeDisplay').textContent = data.referralCode || 'ERROR';
+                    document.getElementById('referralSuccessCount').textContent = data.referralCount || 0;
+                    document.getElementById('referralFailedCount').textContent = data.failedReferrals || 0;
+                }
+            } catch (error) {
+                console.error('Referral data error:', error);
+            }
+        }
+
+        async function loadWithdrawData() {
+            // Just update balance
+            document.getElementById('withdrawBalance').textContent = formatRupiah(userBalance);
+        }
+
+        async function loadWithdrawHistory() {
+            if (!currentUser) return;
+            
+            try {
+                const historyRef = db.collection('withdrawals')
+                    .where('userId', '==', currentUser.uid)
+                    .orderBy('timestamp', 'desc')
+                    .limit(10);
+                
+                const snapshot = await historyRef.get();
+                const historyDiv = document.getElementById('withdrawHistory');
+                
+                if (snapshot.empty) {
+                    historyDiv.innerHTML = `
+                        <div style="text-align: center; padding: 40px 20px; color: rgba(255,255,255,0.5);">
+                            <i class="fas fa-receipt fa-2x" style="margin-bottom: 15px;"></i>
+                            <p>Belum ada riwayat penarikan</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let html = '';
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const date = data.timestamp?.toDate() || new Date();
+                    const statusClass = data.status || 'pending';
+                    const statusText = statusClass === 'success' ? 'SUKSES' : 
+                                      statusClass === 'pending' ? 'PENDING' : 'GAGAL';
+                    const statusColor = statusClass === 'success' ? '#10b981' : 
+                                       statusClass === 'pending' ? '#f59e0b' : '#ef4444';
+                    
+                    html += `
+                        <div class="history-item ${statusClass}">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <div style="font-weight: 700; font-size: 16px;">
+                                    ${formatRupiah(data.amount || 0)}
+                                </div>
+                                <div style="background: ${statusColor}; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">
+                                    ${statusText}
+                                </div>
+                            </div>
+                            <div style="color: rgba(255,255,255,0.7); font-size: 13px;">
+                                ${data.method || ''} • ${data.accountNumber || ''}
+                            </div>
+                            <div style="color: rgba(255,255,255,0.5); font-size: 12px; margin-top: 5px;">
+                                ${date.toLocaleDateString('id-ID')} ${date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                historyDiv.innerHTML = html;
+            } catch (error) {
+                console.error('History error:', error);
+                historyDiv.innerHTML = `<div style="color: #ef4444; text-align: center; padding: 20px;">Error loading history</div>`;
+            }
+        }
+
+        async function loadProfileData() {
+            if (!currentUser) return;
+            
+            try {
+                const userDoc = await db.collection('users').doc(currentUser.uid).get();
+                if (userDoc.exists) {
+                    const data = userDoc.data();
+                    
+                    document.getElementById('profileEmail').textContent = currentUser.email;
+                    document.getElementById('profileUserId').textContent = currentUser.uid.substring(0, 8) + '...';
+                    
+                    if (data.createdAt) {
+                        const joinDate = data.createdAt.toDate();
+                        document.getElementById('profileJoinDate').textContent = joinDate.toLocaleDateString('id-ID');
+                    }
+                }
+            } catch (error) {
+                console.error('Profile error:', error);
+            }
+        }
+
+        function setupRealtimeListener() {
+            if (!currentUser) return;
+            
+            db.collection('users').doc(currentUser.uid)
+                .onSnapshot((doc) => {
+                    if (doc.exists) {
+                        const data = doc.data();
+                        const oldBalance = userBalance;
+                        userBalance = data.balance || 0;
+                        
+                        if (userBalance !== oldBalance) {
+                            updateDashboard();
+                        }
+                    }
+                });
+        }
+
+        // ========== REFERRAL FUNCTIONS ==========
+        function copyReferralCode() {
+            const codeElement = document.getElementById('referralCodeDisplay');
+            const code = codeElement.textContent;
+            
+            if (code === 'LOADING...') return;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                const original = codeElement.textContent;
+                codeElement.textContent = 'COPIED!';
+                codeElement.style.color = '#10b981';
+                
+                showNotification('success', 'Berhasil!', 'Kode referral berhasil disalin');
+                
+                setTimeout(() => {
+                    codeElement.textContent = original;
+                    codeElement.style.color = '#fff';
+                }, 1500);
+            });
+        }
+
+        function shareReferral() {
+            if (!referralCode) {
+                showNotification('error', 'Error!', 'Kode referral belum tersedia');
+                return;
+            }
+            
+            const shareText = `🔥 JOIN FREELANCE GACOR PRO! 🔥\n\nDapatkan bonus Rp150 dengan kode referral saya:\n🎟️ ${referralCode}\n\nLink: ${window.location.href}?ref=${referralCode}\n\n#freelancegacor #referral #uangonline`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Freelance Gacor Referral',
+                    text: shareText,
+                    url: window.location.href
+                });
+            } else {
+                navigator.clipboard.writeText(shareText).then(() => {
+                    showNotification('success', 'Berhasil!', 'Link referral berhasil disalin! Bagikan ke teman.');
+                });
+            }
+        }
+
+        // ========== WITHDRAW FUNCTIONS ==========
+        function selectWallet(wallet) {
+            selectedWallet = wallet;
+            
+            // Reset all
+            document.getElementById('walletForms').style.display = 'none';
+            document.getElementById('bankForm').style.display = 'none';
+            document.querySelectorAll('.wallet-option').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // Activate selected
+            document.getElementById('wallet' + wallet.charAt(0).toUpperCase() + wallet.slice(1)).classList.add('active');
+            
+            // Show form
+            if (wallet === 'bank') {
+                document.getElementById('bankForm').style.display = 'block';
+            } else {
+                document.getElementById('walletForms').style.display = 'block';
+            }
+        }
+
+        async function submitWithdrawal() {
+            if (!selectedWallet) {
+                showNotification('error', 'Error!', 'Pilih metode penarikan terlebih dahulu');
+                return;
+            }
+            
+            const amountInput = document.getElementById('withdrawAmount').value;
+            const amount = parseInt(amountInput);
+            
+            if (!amount || isNaN(amount) || amount < 10000) {
+                showNotification('error', 'Error!', 'Minimal penarikan Rp10.000');
+                return;
+            }
+            
+            if (amount > userBalance) {
+                showNotification('error', 'Error!', 'Saldo tidak mencukupi');
+                return;
+            }
+            
+            let accountInfo = '';
+            let accountName = '';
+            
+            if (selectedWallet === 'bank') {
+                const bank = document.getElementById('bankName').value;
+                const number = document.getElementById('bankNumber').value.trim();
+                const name = document.getElementById('bankAccountName').value.trim();
+                
+                if (!bank || !number || !name) {
+                    showNotification('error', 'Error!', 'Lengkapi data bank');
+                    return;
+                }
+                
+                accountInfo = `${bank}: ${number}`;
+                accountName = name;
+            } else {
+                const number = document.getElementById('walletNumber').value.trim();
+                const name = document.getElementById('walletName').value.trim();
+                
+                if (!number || !name) {
+                    showNotification('error', 'Error!', 'Lengkapi data e-wallet');
+                    return;
+                }
+                
+                accountInfo = `${selectedWallet.toUpperCase()}: ${number}`;
+                accountName = name;
+            }
+            
+            const btn = document.getElementById('withdrawBtn');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<div class="loader"></div>';
+            btn.disabled = true;
+            
+            try {
+                // Create withdrawal request
+                await db.collection('withdrawals').add({
+                    userId: currentUser.uid,
+                    userEmail: currentUser.email,
+                    amount: amount,
+                    method: selectedWallet.toUpperCase(),
+                    accountNumber: accountInfo.split(': ')[1],
+                    accountName: accountName,
+                    status: 'pending',
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                // Update user balance
+                await db.collection('users').doc(currentUser.uid).update({
+                    balance: firebase.firestore.FieldValue.increment(-amount)
+                });
+                
+                userBalance -= amount;
+                
+                // Reset form
+                document.getElementById('withdrawAmount').value = '';
+                document.getElementById('walletNumber').value = '';
+                document.getElementById('walletName').value = '';
+                document.getElementById('bankName').value = '';
+                document.getElementById('bankNumber').value = '';
+                document.getElementById('bankAccountName').value = '';
+                
+                // Reset selection
+                selectedWallet = null;
+                document.querySelectorAll('.wallet-option').forEach(el => {
+                    el.classList.remove('active');
+                });
+                document.getElementById('walletForms').style.display = 'none';
+                document.getElementById('bankForm').style.display = 'none';
+                
+                showNotification('success', 'Berhasil!', 
+                    `Penarikan Rp${amount.toLocaleString('id-ID')} berhasil diajukan! Status: PENDING`);
+                
+                // Update UI
+                updateDashboard();
+                loadWithdrawHistory();
+                
+            } catch (error) {
+                console.error('Withdrawal error:', error);
+                showNotification('error', 'Gagal!', `Gagal mengajukan penarikan: ${error.message}`);
+            } finally {
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+            }
+        }
+
+        // ========== PROFILE FUNCTIONS ==========
+        function showChangePassword() {
+            document.getElementById('changePasswordModal').style.display = 'flex';
+        }
+
+        function closeChangePassword() {
+            document.getElementById('changePasswordModal').style.display = 'none';
+            document.getElementById('oldPassword').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmNewPassword').value = '';
+        }
+
+        async function changePassword() {
+            const oldPassword = document.getElementById('oldPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmNewPassword').value;
+            const btn = document.getElementById('changePasswordBtn');
+            const btnText = document.getElementById('changePasswordText');
+            
+            if (!oldPassword || !newPassword || !confirmPassword) {
+                showNotification('error', 'Error!', 'Semua field harus diisi');
+                return;
+            }
+            
+            if (newPassword.length < 6) {
+                showNotification('error', 'Error!', 'Password baru minimal 6 karakter');
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                showNotification('error', 'Error!', 'Konfirmasi password tidak cocok');
+                return;
+            }
+            
+            btn.disabled = true;
+            btnText.innerHTML = '<div class="loader"></div>';
+            
+            try {
+                // Reauthenticate user
+                const credential = firebase.auth.EmailAuthProvider.credential(
+                    currentUser.email, 
+                    oldPassword
+                );
+                
+                await currentUser.reauthenticateWithCredential(credential);
+                
+                // Update password
+                await currentUser.updatePassword(newPassword);
+                
+                showNotification('success', 'Berhasil!', 'Password berhasil diubah');
+                closeChangePassword();
+                
+            } catch (error) {
+                console.error('Change password error:', error);
+                let errorMessage = error.message;
+                if (error.code === 'auth/wrong-password') {
+                    errorMessage = 'Password lama salah';
+                }
+                showNotification('error', 'Gagal!', errorMessage);
+            } finally {
+                btnText.textContent = 'GANTI PASSWORD';
+                btn.disabled = false;
+            }
+        }
+
+        function logout() {
+            if (confirm('Yakin ingin logout?')) {
+                auth.signOut().then(() => {
+                    window.location.reload();
+                });
+            }
+        }
+
+        // ========== AUTO LOGIN CHECK ==========
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                currentUser = user;
+                
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                if (userDoc.exists) {
+                    userData = userDoc.data();
+                    userBalance = userData.balance || 0;
+                    referralCode = userData.referralCode || '';
+                    
+                    if (userData.role === 'admin') {
+                        window.location.href = 'admin.html';
+                    } else {
+                        showMainApp();
+                        showNotification('info', 'Auto Login', `Selamat datang kembali, ${user.email.split('@')[0]}!`);
+                    }
+                }
+            }
+        });
+
+        // ========== INITIALIZE ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check URL for referral code
+            const urlParams = new URLSearchParams(window.location.search);
+            const refCode = urlParams.get('ref');
+            if (refCode) {
+                document.getElementById('loginReferral').value = refCode;
+                document.getElementById('registerReferral').value = refCode;
+                
+                showNotification('info', 'Referral Ditemukan', 
+                    `Kode referral ${refCode} telah dimasukkan. Daftar untuk dapat bonus!`);
+            }
+        });
+    </script>
+</body>
+</html>
