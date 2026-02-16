@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "routes": [
+    { "src": "/api/create", "dest": "/api/create.js" },
+    { "src": "/api/status", "dest": "/api/status.js" },
+    { "src": "/api/webhook", "dest": "/api/webhook.js" },
+    { "src": "/(.*)", "dest": "/public/$1" }
+  ]
+}
