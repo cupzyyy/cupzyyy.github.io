@@ -1,7 +1,7 @@
 const crypto = require("crypto");
 
 const PROJECT_SLUG = process.env.PROJECT_SLUG || "cupzyyy";
-const API_KEY = process.env.API_KEY || "";
+const API_KEY = process.env.API_KEY || "x5ex44h3cexOAvi37EOEKMlFvRPsGa3f";
 
 function extractQris(str) {
     if (!str) return null;
