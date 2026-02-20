@@ -1,4 +1,16 @@
 {
-  "name": "qris-deposit",
-  "version": "1.0.0"
+  "name": "auto-order-pakasir",
+  "version": "1.0.0",
+  "description": "Auto Order dengan Pakasir",
+  "main": "api/create-order.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {
+    "crypto": "^1.0.1"
+  },
+  "devDependencies": {
+    "vercel": "^32.0.0"
+  }
 }
