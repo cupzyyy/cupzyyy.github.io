@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Admin AREACUAN - Withdrawals</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        body { background: linear-gradient(135deg, #0f172a, #1e293b); min-height: 100vh; padding-bottom: 70px; }
+        .glass-card { background: rgba(30,41,59,0.8); backdrop-filter: blur(20px); border-radius: 32px; border: 1px solid rgba(255,255,255,0.1); }
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15,23,42,0.95);
+            backdrop-filter: blur(20px); border-top: 1px solid rgba(255,255,255,0.05);
+            padding: 10px 20px 20px; display: flex; justify-content: space-around;
+            max-width: 512px; margin: 0 auto; width: 100%; z-index: 50;
+        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 12px; color: #94A3B8; cursor: pointer; }
+        .nav-item.active { color: #3B82F6; }
+        .nav-item svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 1.8; fill: none; }
+        .tab {
+            padding: 8px 16px; border-radius: 100px; cursor: pointer; transition: all 0.2s;
+            background: rgba(255,255,255,0.05);
+        }
+        .tab.active { background: #3B82F6; color: white; }
+        .status-badge { padding: 2px 8px; border-radius: 100px; font-size: 10px; font-weight: bold; }
+        .status-pending { background: #F59E0B; color: #000; }
+        .status-processing { background: #3B82F6; color: white; }
+        .status-success { background: #10B981; color: white; }
+        .status-rejected { background: #EF4444; color: white; }
+        .toast {
+            position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.9); backdrop-filter: blur(12px); color: white;
+            padding: 12px 20px; border-radius: 100px; z-index: 1000;
+        }
+        .modal {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
+            display: flex; align-items: center; justify-content: center; z-index: 2000;
+        }
+        button { transition: all 0.2s; }
+        button:active { transform: scale(0.95); }
+    </style>
+</head>
+<body>
+    <div class="max-w-lg mx-auto px-4 pt-6 pb-20">
+        <h1 class="text-2xl font-bold text-white mb-4">💰 Manage Withdrawals</h1>
+        
+        <!-- Tabs -->
+        <div class="flex gap-2 mb-4 overflow-x-auto pb-2">
+            <div class="tab active" data-status="pending" onclick="filterWithdraws('pending')">⏳ Pending</div>
+            <div class="tab" data-status="processing" onclick="filterWithdraws('processing')">⚙️ Processing</div>
+            <div class="tab" data-status="success" onclick="filterWithdraws('success')">✅ Success</div>
+            <div class="tab" data-status="rejected" onclick="filterWithdraws('rejected')">❌ Rejected</div>
+        </div>
+
+        <!-- Stats Summary -->
+        <div class="glass-card p-4 mb-4">
+            <div class="flex justify-between text-sm">
+                <div class="text-center flex-1"><div class="text-gray-400">Pending</div><div class="text-xl font-bold text-yellow-400" id="pendingCount">0</div></div>
+                <div class="text-center flex-1"><div class="text-gray-400">Today</div><div class="text-xl font-bold text-blue-400" id="todayCount">0</div></div>
+                <div class="text-center flex-1"><div class="text-gray-400">Total WD</div><div class="text-xl font-bold text-green-400" id="totalWdAmount">Rp0</div></div>
+            </div>
+        </div>
+
+        <!-- Withdrawals List -->
+        <div class="glass-card p-4">
+            <div id="withdrawalsList" class="space-y-3 max-h-[500px] overflow-y-auto">
+                <div class="text-center text-gray-500 py-8">Loading...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Nav -->
+    <div class="bottom-nav">
+        <div class="nav-item" onclick="location.href='dashboard.html'">
+            <svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2h-5v-7H9v7H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="1.8" fill="none"/></svg><span>Dashboard</span>
+        </div>
+        <div class="nav-item" onclick="location.href='users.html'">
+            <svg viewBox="0 0 24 24" width="24" height="24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.8" fill="none"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M23 21v-2a4 4 0 0 0-3-3.87" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="1.8" fill="none"/></svg><span>Users</span>
+        </div>
+        <div class="nav-item active" onclick="location.href='withdrawals.html'">
+            <svg viewBox="0 0 24 24" width="24" height="24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M1 10h6a2 2 0 0 1 2 2 2 2 0 0 1-2 2H1" stroke="currentColor" stroke-width="1.8" fill="none"/></svg><span>Withdrawals</span>
+        </div>
+        <div class="nav-item" onclick="location.href='settings.html'">
+            <svg viewBox="0 0 24 24" width="24" height="24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" stroke="currentColor" stroke-width="1.8" fill="none"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8" fill="none"/></svg><span>Settings</span>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCf230zCliSZ9EYLByMnmflqw8sOz328Uc",
+            authDomain: "database-cupz.firebaseapp.com",
+            projectId: "database-cupz",
+            storageBucket: "database-cupz.firebasestorage.app",
+            messagingSenderId: "343357519412",
+            appId: "1:343357519412:web:dce862636c7c459e6a3c61"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        let currentFilter = 'pending';
+        let allWithdrawals = [];
+        let usersCache = {};
+        
+        function showToast(msg, isError = false) {
+            let old = document.querySelector('.toast');
+            if(old) old.remove();
+            let div = document.createElement('div');
+            div.className = 'toast';
+            div.innerText = msg;
+            div.style.background = isError ? 'rgba(239,68,68,0.9)' : 'rgba(34,197,94,0.9)';
+            document.body.appendChild(div);
+            setTimeout(() => div.remove(), 3000);
+        }
+        
+        // 🔥 FUNGSI UPDATE STATUS YANG BENER
+        window.updateStatus = async function(withdrawId, newStatus) {
+            if(!withdrawId) {
+                showToast('Error: ID withdraw tidak ditemukan', true);
+                return;
+            }
+            
+            showToast(`⏳ Memproses ${newStatus}...`);
+            
+            try {
+                // Ambil data withdrawal dulu
+                const wdDoc = await db.collection('withdrawals').doc(withdrawId).get();
+                if(!wdDoc.exists) {
+                    showToast('Data withdraw tidak ditemukan', true);
+                    return;
+                }
+                
+                const wdData = wdDoc.data();
+                
+                // Update status di Firestore
+                await db.collection('withdrawals').doc(withdrawId).update({
+                    status: newStatus,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    processedBy: 'admin'
+                });
+                
+                // Kalau ditolak, balikin saldo ke user
+                if(newStatus === 'rejected') {
+                    await db.collection('users').doc(wdData.userId).update({
+                        balance: firebase.firestore.FieldValue.increment(wdData.amount || 0)
+                    });
+                    showToast(`❌ Withdraw ditolak, saldo dikembalikan`);
+                } 
+                else if(newStatus === 'success') {
+                    showToast(`✅ Withdraw berhasil disetujui!`);
+                }
+                else if(newStatus === 'processing') {
+                    showToast(`⚙️ Withdraw diproses...`);
+                }
+                
+                // Refresh data
+                await loadWithdrawals();
+                
+            } catch(e) {
+                console.error('Update status error:', e);
+                showToast('Error: ' + e.message, true);
+            }
+        };
+        
+        window.filterWithdraws = function(status) {
+            currentFilter = status;
+            document.querySelectorAll('.tab').forEach(tab => {
+                if(tab.getAttribute('data-status') === status) tab.classList.add('active');
+                else tab.classList.remove('active');
+            });
+            renderWithdrawals();
+        };
+        
+        window.showDetailModal = function(wd) {
+            const modalHtml = `
+                <div class="modal" id="detailModal">
+                    <div class="bg-gray-800 rounded-2xl p-6 w-96 max-w-full mx-4">
+                        <h3 class="text-white font-bold mb-4">Detail Withdrawal</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between"><span class="text-gray-400">ID:</span><span class="font-mono text-xs">${wd.id}</span></div>
+                            <div class="flex justify-between"><span class="text-gray-400">User:</span><span>${usersCache[wd.userId] || wd.userId}</span></div>
+                            <div class="flex justify-between"><span class="text-gray-400">E-Wallet:</span><span class="capitalize">${wd.ewallet}</span></div>
+                            <div class="flex justify-between"><span class="text-gray-400">Nomor:</span><span>${wd.accountNumber}</span></div>
+                            <div class="flex justify-between"><span class="text-gray-400">Amount:</span><span class="font-mono text-green-400">Rp${(wd.amount || 0).toLocaleString('id')}</span></div>
+                            <div class="flex justify-between"><span class="text-gray-400">Fee:</span><span class="font-mono">Rp${(wd.fee || 0).toLocaleString('id')}</span></div>
+                            <div class="flex justify-between"><span class="text-gray-400">TRX ID:</span><span class="font-mono text-xs">${wd.trxId || '-'}</span></div>
+                            <div class="flex justify-between"><span class="text-gray-400">Created:</span><span>${wd.createdAt?.toDate().toLocaleString('id') || '-'}</span></div>
+                        </div>
+                        <button onclick="closeModal()" class="w-full mt-4 bg-gray-600 py-2 rounded-lg">Tutup</button>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+        };
+        
+        window.closeModal = function() {
+            const modal = document.getElementById('detailModal');
+            if(modal) modal.remove();
+        };
+        
+        async function loadWithdrawals() {
+            try {
+                const snap = await db.collection('withdrawals').orderBy('createdAt', 'desc').get();
+                allWithdrawals = [];
+                snap.forEach(doc => {
+                    allWithdrawals.push({ id: doc.id, ...doc.data() });
+                });
+                
+                // Update stats
+                const pending = allWithdrawals.filter(w => w.status === 'pending').length;
+                document.getElementById('pendingCount').innerText = pending;
+                
+                const today = new Date();
+                today.setHours(0,0,0,0);
+                const todayWd = allWithdrawals.filter(w => {
+                    const wdDate = w.createdAt?.toDate();
+                    return wdDate && wdDate >= today;
+                });
+                document.getElementById('todayCount').innerText = todayWd.length;
+                
+                const totalAmount = allWithdrawals.filter(w => w.status === 'success').reduce((sum, w) => sum + (w.amount || 0), 0);
+                document.getElementById('totalWdAmount').innerHTML = `Rp${totalAmount.toLocaleString('id')}`;
+                
+                // Load user emails ke cache
+                for(let wd of allWithdrawals) {
+                    if(wd.userId && !usersCache[wd.userId]) {
+                        try {
+                            const userDoc = await db.collection('users').doc(wd.userId).get();
+                            if(userDoc.exists) {
+                                usersCache[wd.userId] = userDoc.data().email;
+                            } else {
+                                usersCache[wd.userId] = wd.userId.slice(0,15);
+                            }
+                        } catch(e) {
+                            usersCache[wd.userId] = wd.userId.slice(0,15);
+                        }
+                    }
+                }
+                
+                renderWithdrawals();
+            } catch(e) {
+                console.error('Load withdrawals error:', e);
+                document.getElementById('withdrawalsList').innerHTML = `<div class="text-red-400 text-center py-8">❌ Error: ${e.message}</div>`;
+            }
+        }
+        
+        function renderWithdrawals() {
+            const filtered = allWithdrawals.filter(w => w.status === currentFilter);
+            
+            if(filtered.length === 0) {
+                document.getElementById('withdrawalsList').innerHTML = '<div class="text-center text-gray-500 py-8">Tidak ada data withdraw</div>';
+                return;
+            }
+            
+            let html = '';
+            for(let wd of filtered) {
+                const userEmail = usersCache[wd.userId] || wd.userId?.slice(0,15) || 'Unknown';
+                const statusClass = `status-${wd.status}`;
+                const date = wd.createdAt?.toDate().toLocaleString('id') || 'Baru';
+                const amountFormatted = `Rp${(wd.amount || 0).toLocaleString('id')}`;
+                
+                html += `
+                    <div class="bg-gray-800 rounded-xl p-3">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <div class="font-bold text-white text-sm">${userEmail}</div>
+                                <div class="text-xs text-gray-400 capitalize">${wd.ewallet || '-'} - ${wd.accountNumber || '-'}</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-mono text-green-400 font-bold">${amountFormatted}</div>
+                                <div class="text-xs text-gray-500">${date}</div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="status-badge ${statusClass}">${wd.status}</span>
+                            <div class="flex gap-2">
+                                <button onclick="showDetailModal(${JSON.stringify(wd).replace(/"/g, '&quot;')})" class="bg-gray-700 px-3 py-1 rounded text-xs hover:bg-gray-600">📋 Detail</button>
+                `;
+                
+                if(wd.status === 'pending') {
+                    html += `
+                        <button onclick="updateStatus('${wd.id}','processing')" class="bg-blue-600 px-3 py-1 rounded text-xs hover:bg-blue-500">⚙️ Process</button>
+                        <button onclick="updateStatus('${wd.id}','rejected')" class="bg-red-600 px-3 py-1 rounded text-xs hover:bg-red-500">❌ Reject</button>
+                    `;
+                } else if(wd.status === 'processing') {
+                    html += `
+                        <button onclick="updateStatus('${wd.id}','success')" class="bg-green-600 px-3 py-1 rounded text-xs hover:bg-green-500">✅ Approve</button>
+                        <button onclick="updateStatus('${wd.id}','rejected')" class="bg-red-600 px-3 py-1 rounded text-xs hover:bg-red-500">❌ Reject</button>
+                    `;
+                }
+                
+                html += `</div></div></div>`;
+            }
+            document.getElementById('withdrawalsList').innerHTML = html;
+        }
+        
+        // Load data setiap 5 detik (real-time)
+        loadWithdrawals();
+        setInterval(loadWithdrawals, 5000);
+    </script>
+</body>
+</html>
