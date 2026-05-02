@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Admin AREACUAN - Settings</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        body { background: linear-gradient(135deg, #0f172a, #1e293b); min-height: 100vh; padding-bottom: 70px; }
+        .glass-card { background: rgba(30,41,59,0.8); backdrop-filter: blur(20px); border-radius: 32px; border: 1px solid rgba(255,255,255,0.1); }
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15,23,42,0.95); backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255,255,255,0.05); padding: 10px 20px 20px; display: flex; justify-content: space-around;
+            max-width: 512px; margin: 0 auto; width: 100%; z-index: 50;
+        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 12px; color: #94A3B8; cursor: pointer; }
+        .nav-item.active { color: #3B82F6; }
+        .nav-item svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 1.8; fill: none; }
+        .setting-group {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 16px;
+            margin-bottom: 16px;
+        }
+        .toast {
+            position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(12px); color: white; padding: 12px 20px; border-radius: 100px; z-index: 1000;
+        }
+    </style>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <div class="max-w-lg mx-auto px-4 pt-6 pb-20">
+        <h1 class="text-2xl font-bold text-white mb-4">⚙️ System Settings</h1>
+        
+        <!-- Search & Edit User -->
+        <div class="glass-card p-5 mb-4">
+            <div class="font-bold text-white mb-3 flex items-center gap-2">
+                <span>🔍</span> Cari & Edit User
+            </div>
+            <input type="text" id="searchEmail" placeholder="Email user..." class="w-full bg-gray-800 text-white rounded-xl px-4 py-2 mb-3">
+            <button onclick="searchUser()" class="w-full bg-blue-600 py-2 rounded-xl">Cari User</button>
+            <div id="userEditPanel" class="mt-4 hidden">
+                <div class="text-sm text-gray-300 mb-2" id="foundUserName"></div>
+                <div class="flex gap-2 flex-wrap">
+                    <input type="number" id="editBalance" placeholder="Saldo baru" class="flex-1 bg-gray-800 text-white rounded-lg px-3 py-2 min-w-[100px]">
+                    <select id="editLevel" class="bg-gray-800 text-white rounded-lg px-3 py-2">
+                        <option>FREE</option>
+                        <option>PREMIUM</option>
+                        <option>VIP</option>
+                    </select>
+                    <button onclick="saveUserEdit()" class="bg-green-600 px-4 rounded-lg">Save</button>
+                </div>
+                <button onclick="deleteUserByEmail()" class="w-full mt-2 bg-red-600 py-2 rounded-lg text-sm">Hapus User</button>
+            </div>
+        </div>
+
+        <!-- Referral Commission Config -->
+        <div class="glass-card p-5 mb-4">
+            <div class="font-bold text-white mb-3 flex items-center gap-2">
+                <span>💰</span> Komisi Referral
+            </div>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-300">FREE</span>
+                    <div class="flex items-center gap-2">
+                        <span class="text-gray-500">Rp</span>
+                        <input type="number" id="freeComm" class="bg-gray-800 text-white rounded-lg px-3 py-1 w-28 text-right" value="200">
+                    </div>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-purple-400">PREMIUM</span>
+                    <div class="flex items-center gap-2">
+                        <span class="text-gray-500">Rp</span>
+                        <input type="number" id="premiumComm" class="bg-gray-800 text-white rounded-lg px-3 py-1 w-28 text-right" value="3000">
+                    </div>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-orange-400">VIP</span>
+                    <div class="flex items-center gap-2">
+                        <span class="text-gray-500">Rp</span>
+                        <input type="number" id="vipComm" class="bg-gray-800 text-white rounded-lg px-3 py-1 w-28 text-right" value="5000">
+                    </div>
+                </div>
+            </div>
+            <button onclick="saveCommission()" class="w-full mt-4 bg-purple-600 py-2 rounded-xl">💾 Simpan Konfigurasi</button>
+        </div>
+
+        <!-- Withdraw Limits -->
+        <div class="glass-card p-5 mb-4">
+            <div class="font-bold text-white mb-3 flex items-center gap-2">
+                <span>💸</span> Batas Withdraw
+            </div>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-300">Minimal (pertama 5x)</span>
+                    <div class="flex items-center gap-2">
+                        <span class="text-gray-500">Rp</span>
+                        <input type="number" id="minFirst" class="bg-gray-800 text-white rounded-lg px-3 py-1 w-28 text-right" value="200">
+                    </div>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-300">Minimal (normal)</span>
+                    <div class="flex items-center gap-2">
+                        <span class="text-gray-500">Rp</span>
+                        <input type="number" id="minNormal" class="bg-gray-800 text-white rounded-lg px-3 py-1 w-28 text-right" value="10000">
+                    </div>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-300">Maksimal per hari</span>
+                    <div class="flex items-center gap-2">
+                        <span class="text-gray-500">Rp</span>
+                        <input type="number" id="maxDaily" class="bg-gray-800 text-white rounded-lg px-3 py-1 w-28 text-right" value="5000000">
+                    </div>
+                </div>
+            </div>
+            <button onclick="saveWithdrawLimit()" class="w-full mt-4 bg-purple-600 py-2 rounded-xl">💾 Simpan Limit</button>
+        </div>
+
+        <!-- Admin Actions -->
+        <div class="glass-card p-5">
+            <div class="font-bold text-white mb-3 flex items-center gap-2">
+                <span>🔧</span> Admin Actions
+            </div>
+            <div class="space-y-2">
+                <button onclick="exportFullData()" class="w-full bg-blue-600 py-2 rounded-xl">📥 Export All Data (JSON)</button>
+                <button onclick="backupFirestore()" class="w-full bg-green-600 py-2 rounded-xl">💾 Backup Firestore</button>
+                <button onclick="clearAllLogs()" class="w-full bg-red-600 py-2 rounded-xl" id="clearLogsBtn">🗑️ Clear All Logs</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Nav -->
+    <div class="bottom-nav">
+        <div class="nav-item" onclick="window.location.href='dashboard.html'">
+            <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2h-5v-7H9v7H5a2 2 0 0 1-2-2z"/></svg><span>Dashboard</span>
+        </div>
+        <div class="nav-item" onclick="window.location.href='users.html'">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Users</span>
+        </div>
+        <div class="nav-item" onclick="window.location.href='withdrawals.html'">
+            <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><path d="M1 10h6a2 2 0 0 1 2 2 2 2 0 0 1-2 2H1"/></svg><span>Withdrawals</span>
+        </div>
+        <div class="nav-item active" onclick="window.location.href='settings.html'">
+            <svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/><circle cx="12" cy="12" r="3"/></svg><span>Settings</span>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCf230zCliSZ9EYLByMnmflqw8sOz328Uc",
+            authDomain: "database-cupz.firebaseapp.com",
+            projectId: "database-cupz",
+            storageBucket: "database-cupz.firebasestorage.app",
+            messagingSenderId: "343357519412",
+            appId: "1:343357519412:web:dce862636c7c459e6a3c61"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+        
+        let currentSearchUid = null;
+        let currentSearchEmail = null;
+        
+        function showToast(msg, isError = false) {
+            let old = document.querySelector('.toast');
+            if(old) old.remove();
+            let div = document.createElement('div');
+            div.className = 'toast';
+            div.innerText = msg;
+            div.style.background = isError ? 'rgba(239,68,68,0.9)' : 'rgba(34,197,94,0.9)';
+            document.body.appendChild(div);
+            setTimeout(() => div.remove(), 3000);
+        }
+        
+        async function searchUser() {
+            let email = document.getElementById('searchEmail').value.trim();
+            if(!email) {
+                showToast('Masukkan email dulu, goblok!', true);
+                return;
+            }
+            
+            let snap = await db.collection('users').where('email', '==', email).get();
+            if(snap.empty) {
+                showToast('User not found!', true);
+                document.getElementById('userEditPanel').classList.add('hidden');
+                return;
+            }
+            
+            let doc = snap.docs[0];
+            currentSearchUid = doc.id;
+            currentSearchEmail = email;
+            let data = doc.data();
+            document.getElementById('foundUserName').innerHTML = `📧 ${data.email} | 🏷️ ${data.level} | 💰 Rp${(data.balance || 0).toLocaleString('id')}`;
+            document.getElementById('editBalance').value = data.balance || 0;
+            document.getElementById('editLevel').value = data.level || 'FREE';
+            document.getElementById('userEditPanel').classList.remove('hidden');
+        }
+        
+        async function saveUserEdit() {
+            if(!currentSearchUid) return;
+            let newBalance = parseInt(document.getElementById('editBalance').value);
+            let newLevel = document.getElementById('editLevel').value;
+            
+            await db.collection('users').doc(currentSearchUid).update({
+                balance: newBalance,
+                level: newLevel
+            });
+            showToast('✅ User updated!');
+            setTimeout(() => searchUser(), 500);
+        }
+        
+        async function deleteUserByEmail() {
+            if(!currentSearchUid) return;
+            if(confirm(`Yakin hapus user ${currentSearchEmail}? GABISA BALIK!`)) {
+                await db.collection('users').doc(currentSearchUid).delete();
+                showToast('🗑️ User deleted');
+                document.getElementById('userEditPanel').classList.add('hidden');
+                document.getElementById('searchEmail').value = '';
+                currentSearchUid = null;
+            }
+        }
+        
+        function saveCommission() {
+            let free = document.getElementById('freeComm').value;
+            let premium = document.getElementById('premiumComm').value;
+            let vip = document.getElementById('vipComm').value;
+            
+            localStorage.setItem('comm_free', free);
+            localStorage.setItem('comm_premium', premium);
+            localStorage.setItem('comm_vip', vip);
+            
+            showToast('💾 Commission settings saved to localStorage');
+        }
+        
+        function saveWithdrawLimit() {
+            let first = document.getElementById('minFirst').value;
+            let normal = document.getElementById('minNormal').value;
+            let maxDaily = document.getElementById('maxDaily').value;
+            
+            localStorage.setItem('min_first', first);
+            localStorage.setItem('min_normal', normal);
+            localStorage.setItem('max_daily', maxDaily);
+            
+            showToast('💾 Withdraw limits saved to localStorage');
+        }
+        
+        async function exportFullData() {
+            showToast('📥 Exporting data...');
+            let data = {
+                exportedAt: new Date().toISOString(),
+                users: [],
+                withdrawals: [],
+                referralHistory: []
+            };
+            
+            let usersSnap = await db.collection('users').get();
+            usersSnap.forEach(doc => {
+                data.users.push({ id: doc.id, ...doc.data() });
+            });
+            
+            let wdSnap = await db.collection('withdrawals').get();
+            wdSnap.forEach(doc => {
+                data.withdrawals.push({ id: doc.id, ...doc.data() });
+            });
+            
+            let refSnap = await db.collection('referralHistory').get();
+            refSnap.forEach(doc => {
+                data.referralHistory.push({ id: doc.id, ...doc.data() });
+            });
+            
+            let blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            let url = URL.createObjectURL(blob);
+            let a = document.createElement('a');
+            a.href = url;
+            a.download = `areacuan_backup_${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('✅ Export complete!');
+        }
+        
+        async function backupFirestore() {
+            showToast('💾 Creating backup...');
+            // Simpan ke collection terpisah
+            let backupId = `backup_${Date.now()}`;
+            let usersSnap = await db.collection('users').get();
+            
+            let batch = db.batch();
+            usersSnap.forEach(doc => {
+                let backupRef = db.collection('backups').doc(`${backupId}_user_${doc.id}`);
+                batch.set(backupRef, {
+                    originalId: doc.id,
+                    data: doc.data(),
+                    backedUpAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            });
+            await batch.commit();
+            showToast('✅ Backup created in "backups" collection');
+        }
+        
+        async function clearAllLogs() {
+            if(confirm('HAPUS SEMUA LOG? TINDAKAN INI TIDAK BISA DIURUNG!')) {
+                let collections = ['withdraw_logs', 'callback_logs', 'webhook_logs', 'fraud_logs'];
+                for(let col of collections) {
+                    let snap = await db.collection(col).get();
+                    let batch = db.batch();
+                    snap.forEach(doc => batch.delete(doc.ref));
+                    await batch.commit();
+                }
+                showToast('🗑️ All logs cleared');
+            }
+        }
+        
+        // Load saved settings from localStorage
+        function loadSavedSettings() {
+            let free = localStorage.getItem('comm_free');
+            let premium = localStorage.getItem('comm_premium');
+            let vip = localStorage.getItem('comm_vip');
+            let minFirst = localStorage.getItem('min_first');
+            let minNormal = localStorage.getItem('min_normal');
+            let maxDaily = localStorage.getItem('max_daily');
+            
+            if(free) document.getElementById('freeComm').value = free;
+            if(premium) document.getElementById('premiumComm').value = premium;
+            if(vip) document.getElementById('vipComm').value = vip;
+            if(minFirst) document.getElementById('minFirst').value = minFirst;
+            if(minNormal) document.getElementById('minNormal').value = minNormal;
+            if(maxDaily) document.getElementById('maxDaily').value = maxDaily;
+        }
+        
+        loadSavedSettings();
+    </script>
+</body>
+</html>

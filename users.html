@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Admin AREACUAN - Users</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        body { background: linear-gradient(135deg, #0f172a, #1e293b); min-height: 100vh; padding-bottom: 70px; }
+        .glass-card { background: rgba(30,41,59,0.8); backdrop-filter: blur(20px); border-radius: 32px; border: 1px solid rgba(255,255,255,0.1); }
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15,23,42,0.95); backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255,255,255,0.05); padding: 10px 20px 20px; display: flex; justify-content: space-around;
+            max-width: 512px; margin: 0 auto; width: 100%; z-index: 50;
+        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 12px; color: #94A3B8; cursor: pointer; }
+        .nav-item.active { color: #3B82F6; }
+        .nav-item svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 1.8; fill: none; }
+        .modal {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
+            display: flex; align-items: center; justify-content: center; z-index: 2000;
+        }
+        .toast {
+            position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(12px); color: white; padding: 12px 20px; border-radius: 100px; z-index: 1000;
+        }
+        table { width: 100%; font-size: 12px; }
+        th, td { padding: 10px 6px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .user-row:hover { background: rgba(59,130,246,0.1); cursor: pointer; }
+    </style>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <div class="max-w-lg mx-auto px-4 pt-6 pb-20">
+        <h1 class="text-2xl font-bold text-white mb-4">👥 Manage Users</h1>
+        
+        <!-- Search & Filter -->
+        <div class="glass-card p-3 mb-4">
+            <div class="flex gap-2">
+                <input type="text" id="searchInput" placeholder="Cari email atau nama..." class="flex-1 bg-gray-800 text-white rounded-xl px-4 py-2 outline-none">
+                <select id="levelFilter" class="bg-gray-800 text-white rounded-xl px-3 py-2">
+                    <option value="all">All Levels</option>
+                    <option value="FREE">FREE</option>
+                    <option value="PREMIUM">PREMIUM</option>
+                    <option value="VIP">VIP</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Users Table -->
+        <div class="glass-card p-4 overflow-x-auto">
+            <table class="w-full">
+                <thead class="text-gray-400 text-xs border-b border-gray-700">
+                    <tr>
+                        <th>Email</th>
+                        <th>Level</th>
+                        <th>Saldo</th>
+                        <th>Ref</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody">
+                    <tr><td colspan="5" class="text-center py-8"><div class="loading-spinner mx-auto"></div></td></tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Add User Button -->
+        <button onclick="openAddUserModal()" class="fixed bottom-24 right-4 bg-blue-600 text-white p-4 rounded-full shadow-lg active:scale-95 transition">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        </button>
+    </div>
+
+    <!-- Bottom Nav -->
+    <div class="bottom-nav">
+        <div class="nav-item" onclick="window.location.href='dashboard.html'">
+            <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2h-5v-7H9v7H5a2 2 0 0 1-2-2z"/></svg><span>Dashboard</span>
+        </div>
+        <div class="nav-item active" onclick="window.location.href='users.html'">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Users</span>
+        </div>
+        <div class="nav-item" onclick="window.location.href='withdrawals.html'">
+            <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><path d="M1 10h6a2 2 0 0 1 2 2 2 2 0 0 1-2 2H1"/></svg><span>Withdrawals</span>
+        </div>
+        <div class="nav-item" onclick="window.location.href='settings.html'">
+            <svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/><circle cx="12" cy="12" r="3"/></svg><span>Settings</span>
+        </div>
+    </div>
+
+    <style>
+        .loading-spinner {
+            border: 3px solid rgba(59,130,246,0.3);
+            border-radius: 50%;
+            border-top: 3px solid #3B82F6;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCf230zCliSZ9EYLByMnmflqw8sOz328Uc",
+            authDomain: "database-cupz.firebaseapp.com",
+            projectId: "database-cupz",
+            storageBucket: "database-cupz.firebasestorage.app",
+            messagingSenderId: "343357519412",
+            appId: "1:343357519412:web:dce862636c7c459e6a3c61"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+        
+        let allUsers = [];
+        let unsubscribe = null;
+        
+        function showToast(msg, isError = false) {
+            let old = document.querySelector('.toast');
+            if(old) old.remove();
+            let div = document.createElement('div');
+            div.className = 'toast';
+            div.innerText = msg;
+            div.style.background = isError ? 'rgba(239,68,68,0.9)' : 'rgba(34,197,94,0.9)';
+            document.body.appendChild(div);
+            setTimeout(() => div.remove(), 3000);
+        }
+        
+        async function editUser(uid, oldLevel, oldBalance, oldEmail) {
+            let modalHtml = `
+                <div class="modal" id="editModal">
+                    <div class="bg-gray-800 rounded-2xl p-6 w-80">
+                        <h3 class="text-white font-bold mb-4">Edit User</h3>
+                        <div class="mb-3">
+                            <label class="text-gray-400 text-sm">Email</label>
+                            <input type="text" id="editEmail" value="${oldEmail}" class="w-full bg-gray-700 text-white rounded-lg px-3 py-2">
+                        </div>
+                        <div class="mb-3">
+                            <label class="text-gray-400 text-sm">Level</label>
+                            <select id="editLevel" class="w-full bg-gray-700 text-white rounded-lg px-3 py-2">
+                                <option ${oldLevel === 'FREE' ? 'selected' : ''}>FREE</option>
+                                <option ${oldLevel === 'PREMIUM' ? 'selected' : ''}>PREMIUM</option>
+                                <option ${oldLevel === 'VIP' ? 'selected' : ''}>VIP</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="text-gray-400 text-sm">Saldo</label>
+                            <input type="number" id="editBalance" value="${oldBalance}" class="w-full bg-gray-700 text-white rounded-lg px-3 py-2">
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="saveUserEdit('${uid}')" class="flex-1 bg-green-600 py-2 rounded-lg">Save</button>
+                            <button onclick="closeModal()" class="flex-1 bg-gray-600 py-2 rounded-lg">Cancel</button>
+                        </div>
+                        <button onclick="deleteUser('${uid}')" class="w-full mt-3 bg-red-600 py-2 rounded-lg text-sm">Hapus User</button>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+        }
+        
+        function closeModal() {
+            let modal = document.getElementById('editModal');
+            if(modal) modal.remove();
+        }
+        
+        async function saveUserEdit(uid) {
+            let newEmail = document.getElementById('editEmail').value;
+            let newLevel = document.getElementById('editLevel').value;
+            let newBalance = parseInt(document.getElementById('editBalance').value);
+            
+            await db.collection('users').doc(uid).update({
+                email: newEmail,
+                level: newLevel,
+                balance: newBalance
+            });
+            showToast('✅ User updated!');
+            closeModal();
+        }
+        
+        async function deleteUser(uid) {
+            if(confirm('Yakin hapus user ini? GABISA BALIK LAGI!')) {
+                await db.collection('users').doc(uid).delete();
+                showToast('🗑️ User deleted');
+                closeModal();
+            }
+        }
+        
+        function openAddUserModal() {
+            let modalHtml = `
+                <div class="modal" id="addModal">
+                    <div class="bg-gray-800 rounded-2xl p-6 w-80">
+                        <h3 class="text-white font-bold mb-4">Tambah User Baru</h3>
+                        <div class="mb-3">
+                            <label class="text-gray-400 text-sm">Email</label>
+                            <input type="email" id="newEmail" class="w-full bg-gray-700 text-white rounded-lg px-3 py-2">
+                        </div>
+                        <div class="mb-3">
+                            <label class="text-gray-400 text-sm">Password</label>
+                            <input type="password" id="newPassword" class="w-full bg-gray-700 text-white rounded-lg px-3 py-2">
+                        </div>
+                        <div class="mb-4">
+                            <label class="text-gray-400 text-sm">Level</label>
+                            <select id="newLevel" class="w-full bg-gray-700 text-white rounded-lg px-3 py-2">
+                                <option>FREE</option>
+                                <option>PREMIUM</option>
+                                <option>VIP</option>
+                            </select>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="addUser()" class="flex-1 bg-green-600 py-2 rounded-lg">Create</button>
+                            <button onclick="closeModal()" class="flex-1 bg-gray-600 py-2 rounded-lg">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+        }
+        
+        async function addUser() {
+            let email = document.getElementById('newEmail').value;
+            let password = document.getElementById('newPassword').value;
+            let level = document.getElementById('newLevel').value;
+            
+            if(!email || !password) {
+                showToast('Isi email dan password!', true);
+                return;
+            }
+            
+            try {
+                // Create auth user
+                let userCred = await auth.createUserWithEmailAndPassword(email, password);
+                let uid = userCred.user.uid;
+                
+                // Create Firestore doc
+                await db.collection('users').doc(uid).set({
+                    email: email,
+                    level: level,
+                    balance: 0,
+                    coin: 0,
+                    referralCount: 0,
+                    referralCode: uid.substring(0,8).toUpperCase(),
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    totalWithdraw: 0,
+                    withdrawCount: 0
+                });
+                
+                showToast('✅ User created!');
+                closeModal();
+            } catch(e) {
+                showToast(e.message, true);
+            }
+        }
+        
+        function renderUsers() {
+            let searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            let levelFilter = document.getElementById('levelFilter').value;
+            
+            let filtered = allUsers.filter(user => {
+                let emailMatch = user.email.toLowerCase().includes(searchTerm);
+                let levelMatch = levelFilter === 'all' || user.level === levelFilter;
+                return emailMatch && levelMatch;
+            });
+            
+            let html = '';
+            filtered.forEach(user => {
+                html += `<tr class="user-row" onclick="editUser('${user.id}', '${user.level}', ${user.balance || 0}, '${user.email}')">
+                    <td class="text-xs">${user.email?.slice(0,25) || '-'}</td>
+                    <td><span class="px-2 py-1 rounded-full text-xs ${user.level === 'VIP' ? 'bg-orange-600' : (user.level === 'PREMIUM' ? 'bg-purple-600' : 'bg-gray-600')}">${user.level || 'FREE'}</span></td>
+                    <td class="font-mono">${(user.balance || 0).toLocaleString('id')}</td>
+                    <td>${user.referralCount || 0}</td>
+                    <td><button class="bg-blue-600 px-2 py-1 rounded text-xs" onclick="event.stopPropagation();editUser('${user.id}', '${user.level}', ${user.balance || 0}, '${user.email}')">✏️</button></td>
+                </tr>`;
+            });
+            
+            if(!html) html = '<tr><td colspan="5" class="text-center py-8 text-gray-500">No users found</td></tr>';
+            document.getElementById('usersTableBody').innerHTML = html;
+        }
+        
+        // Real-time users
+        unsubscribe = db.collection('users').onSnapshot((snap) => {
+            allUsers = [];
+            snap.forEach(doc => {
+                allUsers.push({ id: doc.id, ...doc.data() });
+            });
+            renderUsers();
+        });
+        
+        document.getElementById('searchInput').addEventListener('input', renderUsers);
+        document.getElementById('levelFilter').addEventListener('change', renderUsers);
+    </script>
+</body>
+</html>
